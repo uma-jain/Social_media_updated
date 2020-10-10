@@ -86,9 +86,6 @@ public class ProfileFragment extends Fragment {
                      }catch (Exception e){
                          Picasso.get().load(R.drawable.ic_baseline_person_outline_24).into(Profile_image);
                      }
-
-
-
                 }
             }
 
