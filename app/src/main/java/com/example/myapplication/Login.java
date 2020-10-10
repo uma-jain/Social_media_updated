@@ -218,6 +218,7 @@ public class Login extends AppCompatActivity {
                                         if (error != null) {
 
                                         }
+                                        assert value != null;
                                         if (!value.isEmpty()) {
                                             for (QueryDocumentSnapshot snapshot : value) {
                                                 UserApi userApi = UserApi.getInstance();
