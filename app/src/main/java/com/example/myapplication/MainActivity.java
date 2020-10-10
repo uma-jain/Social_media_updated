@@ -13,10 +13,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import Utils.UserApi;
 
 public class MainActivity extends AppCompatActivity {
      FirebaseAuth firebaseAuth;
@@ -31,6 +34,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         bottomNavigationView=findViewById(R.id.bottom_nav);
         frameLayout=findViewById(R.id.frameL);
+
+        Toast.makeText(this, UserApi.getInstance().getEmail(), Toast.LENGTH_SHORT).show();
+
+
         //bydefault home
         Home home=new Home();
         getSupportFragmentManager().beginTransaction().replace(R.id.frameL,new Home()).commit();
@@ -90,7 +97,6 @@ public class MainActivity extends AppCompatActivity {
             case R.id.logoutbtn:
                 firebaseAuth.signOut();
                 startActivity(new Intent(MainActivity.this,login_signup_getstarted.class));
-
         }
         return super.onOptionsItemSelected(item);
     }
