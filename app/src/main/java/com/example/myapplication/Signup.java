@@ -1,10 +1,12 @@
 package com.example.myapplication;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -24,6 +26,7 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -32,9 +35,16 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.regex.Pattern;
+
+import Utils.UserApi;
 
 public class Signup extends AppCompatActivity {
     private static final int RC_SIGN_IN = 100;
@@ -50,6 +60,14 @@ public class Signup extends AppCompatActivity {
     Button registerbtn;
     SignInButton registerwithgooglebtn;
     private FirebaseAuth mAuth;
+
+
+    //Firestore connection
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+    //collection reference , this collectionReference is going to point to Users collection
+    private CollectionReference collectionReference = db.collection("Users");
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,9 +152,48 @@ public class Signup extends AppCompatActivity {
                             hashMap.put("image","");
                             hashMap.put("bio","");
                             hashMap.put("username","");
-                            hashMap.put("profesion","");
+                            hashMap.put("profession","");
                             hashMap.put("cover","");
+                            hashMap.put("follower", "0");
                             myRef.child(uid).setValue(hashMap);
+
+                            //this will put the user data into firestore
+                            collectionReference.add(hashMap)
+                                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                        @Override
+                                        public void onSuccess(DocumentReference documentReference) {
+                                            documentReference.get()
+                                                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                            if (Objects.requireNonNull(task.getResult()).exists())
+                                                            {
+                                                                String uid = task.getResult()
+                                                                        .getString("uid");
+                                                                String email = task.getResult()
+                                                                        .getString("email");
+
+                                                                //add into local api
+                                                                UserApi userApi = UserApi.getInstance();
+                                                                userApi.setUid(uid);
+                                                                userApi.setEmail(email);
+                                                                userApi.setBio("");
+                                                                userApi.setCover("");
+                                                                userApi.setFollowerCount("0");
+                                                                userApi.setImage("");
+                                                                userApi.setPhone("");
+                                                                userApi.setProfession("");
+                                                                userApi.setUsername("");
+
+                                                                //now pass to mainactivity
+                                                                startActivity(new Intent(Signup.this, MainActivity.class));
+
+                                                            }
+                                                        }
+                                                    });
+                                        }
+                                    });
 
 
 
@@ -198,7 +255,48 @@ public class Signup extends AppCompatActivity {
                             hashMap.put("username","");
                             hashMap.put("profesion","");
                             hashMap.put("cover","");
+                            hashMap.put("followerCount", "");
+
+                            //this will put the user data into firebase
                             myRef.child(uid).setValue(hashMap);
+
+                            //this will put the user data into firestore
+                            collectionReference.add(hashMap)
+                                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                        @Override
+                                        public void onSuccess(DocumentReference documentReference) {
+                                            documentReference.get()
+                                                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                            if (Objects.requireNonNull(task.getResult()).exists())
+                                                            {
+                                                                String uid = task.getResult()
+                                                                        .getString("uid");
+                                                                String email = task.getResult()
+                                                                        .getString("email");
+
+                                                                //add into local api
+                                                                UserApi userApi = UserApi.getInstance();
+                                                                userApi.setUid(uid);
+                                                                userApi.setEmail(email);
+                                                                userApi.setBio("");
+                                                                userApi.setCover("");
+                                                                userApi.setFollowerCount("0");
+                                                                userApi.setImage("");
+                                                                userApi.setPhone("");
+                                                                userApi.setProfession("");
+                                                                userApi.setUsername("");
+
+                                                                //now pass to mainactivity
+                                                                startActivity(new Intent(Signup.this, MainActivity.class));
+
+                                                            }
+                                                        }
+                                                    });
+                                        }
+                                    });
 
                             Toast.makeText(Signup.this, "Welcome ",
                                     Toast.LENGTH_SHORT).show();

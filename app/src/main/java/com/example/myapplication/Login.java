@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
@@ -33,6 +34,15 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SnapshotMetadata;
+
+import Utils.UserApi;
 
 public class Login extends AppCompatActivity {
     private static final int RC_SIGN_IN = 100;
@@ -43,6 +53,12 @@ public class Login extends AppCompatActivity {
     TextView redirect,recover;
     ProgressDialog progressDialog;
     private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
+
+    //Firestore conncetion - its gonna be db where will store our collction
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+    private CollectionReference collectionReference = db.collection("Users");
 
 
 
@@ -189,28 +205,66 @@ public class Login extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            progressDialog.dismiss();
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d("login success", "loginInWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            Toast.makeText(Login.this, "User Logged In",
-                                    Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(Login.this,MainActivity.class));
 
+                        currentUser = mAuth.getCurrentUser();
+                        assert currentUser != null;
+                        String currentUserId = currentUser.getUid();
 
-                        } else {
-                            progressDialog.dismiss();
-                            // If sign in fails, display a message to the user.
-                            Log.w("failure", "signInWithEmail:failure", task.getException());
-                            Toast.makeText(Login.this, "Invalid Credentials",
-                                    Toast.LENGTH_SHORT).show();
+                        collectionReference
+                                .whereEqualTo("uid", currentUserId)
+                                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                                        if (error != null) {
 
-                        }
+                                        }
+                                        assert value != null;
+                                        if (!value.isEmpty()) {
+                                            for (QueryDocumentSnapshot snapshot : value) {
+                                                UserApi userApi = UserApi.getInstance();
+                                                userApi.setUid(snapshot.getString("uid"));
+                                                userApi.setEmail(snapshot.getString("email"));
+                                                userApi.setBio(snapshot.getString("bio"));
+                                                userApi.setCover(snapshot.getString("cover"));
+                                                userApi.setImage(snapshot.getString("image"));
+                                                userApi.setPhone(snapshot.getString("phone"));
+                                                userApi.setProfession(snapshot.getString("profession"));
+                                                userApi.setUsername(snapshot.getString("username"));
+                                                userApi.setFollowerCount(snapshot.getString("followerCount"));
+                                                startActivity(new Intent(Login.this, MainActivity.class));
+                                                finish();
+                                            }
+                                        }
+                                    }
+                                });
+//                        if (task.isSuccessful()) {
+//                            progressDialog.dismiss();
+//                            // Sign in success, update UI with the signed-in user's information
+//                            Log.d("login success", "loginInWithEmail:success");
+//                            FirebaseUser user = mAuth.getCurrentUser();
+//                            Toast.makeText(Login.this, "User Logged In",
+//                                    Toast.LENGTH_SHORT).show();
+//                            startActivity(new Intent(Login.this,MainActivity.class));
+//
+//
+//                        } else {
+//                            progressDialog.dismiss();
+//                            // If sign in fails, display a message to the user.
+//                            Log.w("failure", "signInWithEmail:failure", task.getException());
+//                            Toast.makeText(Login.this, "Invalid Credentials",
+//                                    Toast.LENGTH_SHORT).show();
+//
+//                        }
 
                         // ...
                     }
-                });
+                })
+        .addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
     }
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -243,7 +297,41 @@ public class Login extends AppCompatActivity {
                             FirebaseUser user = mAuth.getCurrentUser();
                             Toast.makeText(Login.this, "User Logged In",
                                     Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(Login.this,MainActivity.class));
+
+                            currentUser = mAuth.getCurrentUser();
+                            String currentUserId = currentUser.getUid();
+
+                            collectionReference
+                                    .whereEqualTo("uid", currentUserId)
+                                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                                            if (error != null) {
+
+                                            }
+                                            if (!value.isEmpty()) {
+                                                for (QueryDocumentSnapshot snapshot : value) {
+                                                    UserApi userApi = UserApi.getInstance();
+                                                    userApi.setUid(snapshot.getString("uid"));
+                                                    userApi.setEmail(snapshot.getString("email"));
+                                                    userApi.setBio(snapshot.getString("bio"));
+                                                    userApi.setCover(snapshot.getString("cover"));
+                                                    userApi.setImage(snapshot.getString("image"));
+                                                    userApi.setPhone(snapshot.getString("phone"));
+                                                    userApi.setProfession(snapshot.getString("profession"));
+                                                    userApi.setUsername(snapshot.getString("username"));
+                                                    userApi.setFollowerCount(snapshot.getString("followerCount"));
+
+                                                    startActivity(new Intent(Login.this, MainActivity.class));
+                                                    finish();
+                                                }
+                                            }
+                                        }
+                                    });
+
+
+
+                            //startActivity(new Intent(Login.this,MainActivity.class));
                             //
                         } else {
                             // If sign in fails, display a message to the user.
