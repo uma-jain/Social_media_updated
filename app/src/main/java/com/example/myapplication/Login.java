@@ -57,7 +57,6 @@ public class Login extends AppCompatActivity {
 
     //Firestore conncetion - its gonna be db where will store our collction
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-
     private CollectionReference collectionReference = db.collection("Users");
 
 
@@ -205,56 +204,50 @@ public class Login extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                           progressDialog.dismiss();
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d("login success", "loginInWithEmail:success");
+                            currentUser = mAuth.getCurrentUser();
+                            assert currentUser != null;
+                            String currentUserId = currentUser.getUid();
 
-                        currentUser = mAuth.getCurrentUser();
-                        assert currentUser != null;
-                        String currentUserId = currentUser.getUid();
-
-                        collectionReference
-                                .whereEqualTo("uid", currentUserId)
-                                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                                        if (error != null) {
-
-                                        }
-                                        assert value != null;
-                                        if (!value.isEmpty()) {
-                                            for (QueryDocumentSnapshot snapshot : value) {
-                                                UserApi userApi = UserApi.getInstance();
-                                                userApi.setUid(snapshot.getString("uid"));
-                                                userApi.setEmail(snapshot.getString("email"));
-                                                userApi.setBio(snapshot.getString("bio"));
-                                                userApi.setCover(snapshot.getString("cover"));
-                                                userApi.setImage(snapshot.getString("image"));
-                                                userApi.setPhone(snapshot.getString("phone"));
-                                                userApi.setProfession(snapshot.getString("profession"));
-                                                userApi.setUsername(snapshot.getString("username"));
-                                                userApi.setFollowerCount(snapshot.getString("followerCount"));
-                                                startActivity(new Intent(Login.this, MainActivity.class));
-                                                finish();
+                            collectionReference
+                                    .whereEqualTo("uid", currentUserId)
+                                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                                            if (error != null) {
+                                            }
+                                            assert value != null;
+                                            if (!value.isEmpty()) {
+                                                for (QueryDocumentSnapshot snapshot : value) {
+                                                    UserApi userApi = UserApi.getInstance();
+                                                    userApi.setUid(snapshot.getString("uid"));
+                                                    userApi.setEmail(snapshot.getString("email"));
+                                                    userApi.setBio(snapshot.getString("bio"));
+                                                    userApi.setCover(snapshot.getString("cover"));
+                                                    userApi.setImage(snapshot.getString("image"));
+                                                    userApi.setPhone(snapshot.getString("phone"));
+                                                    userApi.setProfession(snapshot.getString("profession"));
+                                                    userApi.setUsername(snapshot.getString("username"));
+                                                    userApi.setFollowerCount(snapshot.getString("followerCount"));
+                                                    startActivity(new Intent(Login.this, MainActivity.class));
+                                                    finish();
+                                                }
                                             }
                                         }
-                                    }
-                                });
-//                        if (task.isSuccessful()) {
-//                            progressDialog.dismiss();
-//                            // Sign in success, update UI with the signed-in user's information
-//                            Log.d("login success", "loginInWithEmail:success");
-//                            FirebaseUser user = mAuth.getCurrentUser();
-//                            Toast.makeText(Login.this, "User Logged In",
-//                                    Toast.LENGTH_SHORT).show();
-//                            startActivity(new Intent(Login.this,MainActivity.class));
-//
-//
-//                        } else {
-//                            progressDialog.dismiss();
-//                            // If sign in fails, display a message to the user.
-//                            Log.w("failure", "signInWithEmail:failure", task.getException());
-//                            Toast.makeText(Login.this, "Invalid Credentials",
-//                                    Toast.LENGTH_SHORT).show();
-//
-//                        }
+                                    });
+
+
+                        } else {
+                            progressDialog.dismiss();
+                            // If sign in fails, display a message to the user.
+                           Log.w("failure", "signInWithEmail:failure", task.getException());
+                            Toast.makeText(Login.this, "Invalid Credentials",
+                                  Toast.LENGTH_SHORT).show();
+
+                        }
 
                         // ...
                     }
