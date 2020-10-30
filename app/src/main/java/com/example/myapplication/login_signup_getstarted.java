@@ -22,6 +22,7 @@ public class login_signup_getstarted extends AppCompatActivity {
         FirebaseUser currentUser=firebaseAuth.getCurrentUser();
         if(currentUser != null ){
                startActivity(new Intent(login_signup_getstarted.this,MainActivity.class));
+               finish();
         }
 
         setContentView(R.layout.activity_login_signup_getstarted);

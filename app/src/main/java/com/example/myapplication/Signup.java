@@ -49,10 +49,8 @@ import Utils.UserApi;
 public class Signup extends AppCompatActivity {
     private static final int RC_SIGN_IN = 100;
     GoogleSignInClient mGoogleSignInClient;
-
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef = database.getReference("Users");
-
 
     ProgressDialog progressDialog;
     EditText emailEt,passwordEt;
@@ -95,6 +93,7 @@ public class Signup extends AppCompatActivity {
                 Intent signInIntent = mGoogleSignInClient.getSignInIntent();
                 startActivityForResult(signInIntent, RC_SIGN_IN);
 
+
             }
         });
 
@@ -127,6 +126,7 @@ public class Signup extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(Signup.this,Login.class));
+                finish();
             }
         });
     }
@@ -188,6 +188,7 @@ public class Signup extends AppCompatActivity {
 
                                                                 //now pass to mainactivity
                                                                 startActivity(new Intent(Signup.this, MainActivity.class));
+                                                                finish();
 
                                                             }
                                                         }
@@ -291,6 +292,7 @@ public class Signup extends AppCompatActivity {
 
                                                                 //now pass to mainactivity
                                                                 startActivity(new Intent(Signup.this, MainActivity.class));
+                                                                finish();
 
                                                             }
                                                         }
@@ -301,6 +303,7 @@ public class Signup extends AppCompatActivity {
                             Toast.makeText(Signup.this, "Welcome ",
                                     Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(Signup.this,MainActivity.class));
+                            finish();
                             //
                         } else {
                             // If sign in fails, display a message to the user.
