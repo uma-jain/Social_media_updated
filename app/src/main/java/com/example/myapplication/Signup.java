@@ -120,7 +120,7 @@ public class Signup extends AppCompatActivity {
                     passwordEt.setError("Password length cannot be less than 4 ");
                     passwordEt.setFocusable(true);
                 }
-               else { registerUser(email,password);}
+                else { registerUser(email,password);}
             }
         });
         redirect.setOnClickListener(new View.OnClickListener() {

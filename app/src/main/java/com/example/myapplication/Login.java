@@ -57,7 +57,6 @@ public class Login extends AppCompatActivity {
 
     //Firestore conncetion - its gonna be db where will store our collction
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-
     private CollectionReference collectionReference = db.collection("Users");
 
 
@@ -72,7 +71,7 @@ public class Login extends AppCompatActivity {
         redirect=findViewById(R.id.login_logintoregisterredirect);
         loginbtn=findViewById(R.id.login_loginbtn);
         logingooglebtn=findViewById(R.id.login_withgoogle);
-       recover=findViewById(R.id.login_recoverPassword);
+        recover=findViewById(R.id.login_recoverPassword);
         progressDialog=new ProgressDialog(this);
         progressDialog.setMessage("Logging In....");
 
@@ -95,9 +94,9 @@ public class Login extends AppCompatActivity {
         logingooglebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               
-                    Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-                    startActivityForResult(signInIntent, RC_SIGN_IN);
+
+                Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+                startActivityForResult(signInIntent, RC_SIGN_IN);
 
             }
         });
@@ -151,12 +150,12 @@ public class Login extends AppCompatActivity {
         builder.setPositiveButton("Recover", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-               
+
                 String email=emailEt.getText().toString().trim();
                 beginRecovery(email);
             }
 
-            
+
         });
         builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
             @Override
@@ -173,20 +172,20 @@ public class Login extends AppCompatActivity {
         progressDialog.show();
         mAuth.sendPasswordResetEmail(email)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                progressDialog.dismiss();
-             if(task.isSuccessful()){
-                 Toast.makeText(Login.this,"Email sent",Toast.LENGTH_LONG).show();
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        progressDialog.dismiss();
+                        if(task.isSuccessful()){
+                            Toast.makeText(Login.this,"Email sent",Toast.LENGTH_LONG).show();
 
-             }
-             else{
-                 progressDialog.dismiss();
-                 Toast.makeText(Login.this,"Action Couldnt be Completed",Toast.LENGTH_LONG).show();
-             }
-            }
-        })
-             .addOnFailureListener(new OnFailureListener() {
+                        }
+                        else{
+                            progressDialog.dismiss();
+                            Toast.makeText(Login.this,"Action Couldnt be Completed",Toast.LENGTH_LONG).show();
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         progressDialog.dismiss();
@@ -205,66 +204,60 @@ public class Login extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            progressDialog.dismiss();
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d("login success", "loginInWithEmail:success");
+                            currentUser = mAuth.getCurrentUser();
+                            assert currentUser != null;
+                            String currentUserId = currentUser.getUid();
 
-                        currentUser = mAuth.getCurrentUser();
-                        assert currentUser != null;
-                        String currentUserId = currentUser.getUid();
-
-                        collectionReference
-                                .whereEqualTo("uid", currentUserId)
-                                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                                        if (error != null) {
-
-                                        }
-                                        assert value != null;
-                                        if (!value.isEmpty()) {
-                                            for (QueryDocumentSnapshot snapshot : value) {
-                                                UserApi userApi = UserApi.getInstance();
-                                                userApi.setUid(snapshot.getString("uid"));
-                                                userApi.setEmail(snapshot.getString("email"));
-                                                userApi.setBio(snapshot.getString("bio"));
-                                                userApi.setCover(snapshot.getString("cover"));
-                                                userApi.setImage(snapshot.getString("image"));
-                                                userApi.setPhone(snapshot.getString("phone"));
-                                                userApi.setProfession(snapshot.getString("profession"));
-                                                userApi.setUsername(snapshot.getString("username"));
-                                                userApi.setFollowerCount(snapshot.getString("followerCount"));
-                                                startActivity(new Intent(Login.this, MainActivity.class));
-                                                finish();
+                            collectionReference
+                                    .whereEqualTo("uid", currentUserId)
+                                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                                            if (error != null) {
+                                            }
+                                            assert value != null;
+                                            if (!value.isEmpty()) {
+                                                for (QueryDocumentSnapshot snapshot : value) {
+                                                    UserApi userApi = UserApi.getInstance();
+                                                    userApi.setUid(snapshot.getString("uid"));
+                                                    userApi.setEmail(snapshot.getString("email"));
+                                                    userApi.setBio(snapshot.getString("bio"));
+                                                    userApi.setCover(snapshot.getString("cover"));
+                                                    userApi.setImage(snapshot.getString("image"));
+                                                    userApi.setPhone(snapshot.getString("phone"));
+                                                    userApi.setProfession(snapshot.getString("profession"));
+                                                    userApi.setUsername(snapshot.getString("username"));
+                                                    userApi.setFollowerCount(snapshot.getString("followerCount"));
+                                                    startActivity(new Intent(Login.this, MainActivity.class));
+                                                    finish();
+                                                }
                                             }
                                         }
-                                    }
-                                });
-//                        if (task.isSuccessful()) {
-//                            progressDialog.dismiss();
-//                            // Sign in success, update UI with the signed-in user's information
-//                            Log.d("login success", "loginInWithEmail:success");
-//                            FirebaseUser user = mAuth.getCurrentUser();
-//                            Toast.makeText(Login.this, "User Logged In",
-//                                    Toast.LENGTH_SHORT).show();
-//                            startActivity(new Intent(Login.this,MainActivity.class));
-//
-//
-//                        } else {
-//                            progressDialog.dismiss();
-//                            // If sign in fails, display a message to the user.
-//                            Log.w("failure", "signInWithEmail:failure", task.getException());
-//                            Toast.makeText(Login.this, "Invalid Credentials",
-//                                    Toast.LENGTH_SHORT).show();
-//
-//                        }
+                                    });
+
+
+                        } else {
+                            progressDialog.dismiss();
+                            // If sign in fails, display a message to the user.
+                            Log.w("failure", "signInWithEmail:failure", task.getException());
+                            Toast.makeText(Login.this, "Invalid Credentials",
+                                    Toast.LENGTH_SHORT).show();
+
+                        }
 
                         // ...
                     }
                 })
-        .addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
 
-            }
-        });
+                    }
+                });
     }
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

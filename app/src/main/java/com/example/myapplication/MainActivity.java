@@ -22,9 +22,9 @@ import com.google.firebase.auth.FirebaseUser;
 import Utils.UserApi;
 
 public class MainActivity extends AppCompatActivity {
-     FirebaseAuth firebaseAuth;
-     FrameLayout frameLayout;
-     BottomNavigationView bottomNavigationView;
+    FirebaseAuth firebaseAuth;
+    FrameLayout frameLayout;
+    BottomNavigationView bottomNavigationView;
 
 
     @SuppressLint("WrongViewCast")
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.Profile:
                         selected=new ProfileFragment();
-                                               break;
+                        break;
                 }
                 getSupportFragmentManager().beginTransaction().replace(R.id.frameL,selected).commit();
                 return true;

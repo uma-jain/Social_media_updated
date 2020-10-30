@@ -21,7 +21,7 @@ public class login_signup_getstarted extends AppCompatActivity {
         //if user authenticated and profile is created go to main activity
         FirebaseUser currentUser=firebaseAuth.getCurrentUser();
         if(currentUser != null ){
-               startActivity(new Intent(login_signup_getstarted.this,MainActivity.class));
+            startActivity(new Intent(login_signup_getstarted.this,MainActivity.class));
         }
 
         setContentView(R.layout.activity_login_signup_getstarted);
