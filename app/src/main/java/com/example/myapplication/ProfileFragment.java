@@ -38,15 +38,11 @@ public class ProfileFragment extends Fragment {
     CircleImageView profile_image_container;
     ImageView coverImageContainer;
     FloatingActionButton editProfileBtn;
-
-
     public ProfileFragment() {
         // Required empty public constructor
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
-
         super.onCreate(savedInstanceState);
       }
 
@@ -67,7 +63,6 @@ public class ProfileFragment extends Fragment {
 
         profile_image_container =(CircleImageView) view.findViewById(R.id.fp_profileImage);
         coverImageContainer=view.findViewById(R.id.fp_cover);
-
         editProfileBtn=view.findViewById(R.id.fp_editprofile);
 
         Query query=databaseReference.orderByChild("uid").equalTo(currentuser.getUid());
@@ -81,7 +76,6 @@ public class ProfileFragment extends Fragment {
                     String profession= (String) ds.child("profesion").getValue();
                     String image=  ds.child("image").getValue(String.class);
                     String cover=  ds.child("cover").getValue(String.class);
-
 
                     if((name == null || name.length() == 0 )&&( bio==null || bio.length() ==0) &&( profession==null ||profession.length()==0)){
                         Toast.makeText(getContext(),"go to create profile"+name,Toast.LENGTH_LONG).show();

@@ -9,6 +9,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Layout;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
@@ -67,8 +68,12 @@ public class MainActivity extends AppCompatActivity {
 
                         break;
                     case R.id.Profile:
+                      UserApi  userApi=UserApi.getUserApi();
+                      if(TextUtils.isEmpty(userApi.getUsername()) ){
+                        //  selected=new CreateProfile();
+                      }
                         selected=new ProfileFragment();
-                                               break;
+                         break;
                 }
                 getSupportFragmentManager().beginTransaction().replace(R.id.frameL,selected).commit();
                 return true;

@@ -185,8 +185,8 @@ public class Signup extends AppCompatActivity {
                                                                 userApi.setPhone("");
                                                                 userApi.setProfession("");
                                                                 userApi.setUsername("");
-
                                                                 //now pass to mainactivity
+                                                                Toast.makeText(Signup.this, "Registered Successfully",Toast.LENGTH_SHORT).show();
                                                                 startActivity(new Intent(Signup.this, MainActivity.class));
                                                                 finish();
 
@@ -195,12 +195,6 @@ public class Signup extends AppCompatActivity {
                                                     });
                                         }
                                     });
-
-
-
-                            Toast.makeText(Signup.this, "Registered Successfully",
-                                    Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(Signup.this,MainActivity.class));
                         } else {
                             // If sign in fails, display a message to the user.
                             progressDialog.dismiss();
@@ -291,6 +285,8 @@ public class Signup extends AppCompatActivity {
                                                                 userApi.setUsername("");
 
                                                                 //now pass to mainactivity
+                                                                Toast.makeText(Signup.this, "Welcome ",
+                                                                        Toast.LENGTH_SHORT).show();
                                                                 startActivity(new Intent(Signup.this, MainActivity.class));
                                                                 finish();
 
@@ -300,9 +296,6 @@ public class Signup extends AppCompatActivity {
                                         }
                                     });
 
-                            Toast.makeText(Signup.this, "Welcome ",
-                                    Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(Signup.this,MainActivity.class));
                             finish();
                             //
                         } else {

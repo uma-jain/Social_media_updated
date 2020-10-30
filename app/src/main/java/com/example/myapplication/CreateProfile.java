@@ -57,8 +57,6 @@ public class CreateProfile extends AppCompatActivity {
     //realtime databse
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference databaseReference = database.getReference("Users");
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
