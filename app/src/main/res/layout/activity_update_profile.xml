@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    tools:context=".CreateProfile">
+    tools:context=".UpdateProfile">
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -20,7 +20,7 @@
                 android:layout_width="match_parent"
                 android:clickable="true"
                 android:layout_height="180dp"
-                android:id="@+id/cp_cover"
+                android:id="@+id/up_cover"
                 ></ImageView>
 
             <ImageView
@@ -28,7 +28,7 @@
                 android:layout_height="50dp"
                 android:layout_margin="20dp"
                 android:clickable="true"
-                android:id="@+id/cp_addcover"
+                android:id="@+id/up_addcover"
                 android:layout_marginLeft="65dp"
                 android:layout_marginTop="300dp"
                 android:layout_alignParentRight="true"
@@ -44,7 +44,7 @@
             android:layout_height="wrap_content">
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/cp_profileImage"
+                android:id="@+id/up_profileImage"
                 android:layout_width="130dp"
                 android:layout_height="130dp"
                 android:layout_marginStart="30dp"
@@ -58,7 +58,7 @@
                 android:layout_height="40dp"
                 android:layout_marginLeft="120dp"
                 android:clickable="true"
-                android:id="@+id/cp_addprofile"
+                android:id="@+id/up_addprofile"
                 android:layout_marginTop="200dp"
                 android:background="@android:color/transparent"
                 android:src="@drawable/ic_baseline_add_circle_outline_24"></ImageView>
@@ -70,7 +70,7 @@
     <LinearLayout
         android:layout_below="@+id/r1"
         android:layout_width="match_parent"
-                android:orientation="vertical"
+        android:orientation="vertical"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:id="@+id/l1"
@@ -85,7 +85,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
             app:backgroundTint="#3949AB"
-            android:id="@+id/cp_username"
+            android:id="@+id/up_username"
             ></EditText>
         <TextView
             android:layout_width="match_parent"
@@ -96,7 +96,7 @@
             android:layout_width="match_parent"
             app:backgroundTint="#3949AB"
             android:layout_height="wrap_content"
-            android:id="@+id/cp_bio"
+            android:id="@+id/up_bio"
             android:layout_marginBottom="15dp"
             ></EditText>
         <TextView
@@ -108,7 +108,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
-            android:id="@+id/cp_profession"
+            android:id="@+id/up_profession"
             app:backgroundTint="#3949AB"
             ></EditText>
 
@@ -118,16 +118,16 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/cp_createProfile"
+        android:id="@+id/up_UpdateProfile"
         android:layout_below="@+id/l1"
         android:background="#3949AB"
         android:layout_margin="20dp"
         android:textColor="@android:color/white"
-        android:text="Create Profile"
+        android:text="Update Profile"
         android:shadowRadius="5"
         android:shadowColor="@android:color/black"
         android:shadowDy="2"
         android:shadowDx="2"
-    ></Button>
+        ></Button>
 
 </RelativeLayout>

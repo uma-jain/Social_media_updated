@@ -71,7 +71,7 @@ public class Login extends AppCompatActivity {
         redirect=findViewById(R.id.login_logintoregisterredirect);
         loginbtn=findViewById(R.id.login_loginbtn);
         logingooglebtn=findViewById(R.id.login_withgoogle);
-        recover=findViewById(R.id.login_recoverPassword);
+       recover=findViewById(R.id.login_recoverPassword);
         progressDialog=new ProgressDialog(this);
         progressDialog.setMessage("Logging In....");
 
@@ -94,9 +94,9 @@ public class Login extends AppCompatActivity {
         logingooglebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-                startActivityForResult(signInIntent, RC_SIGN_IN);
+               
+                    Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+                    startActivityForResult(signInIntent, RC_SIGN_IN);
 
             }
         });
@@ -128,6 +128,7 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(Login.this,Signup.class));
+                finish();
 
             }
         });
@@ -150,12 +151,12 @@ public class Login extends AppCompatActivity {
         builder.setPositiveButton("Recover", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-
+               
                 String email=emailEt.getText().toString().trim();
                 beginRecovery(email);
             }
 
-
+            
         });
         builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
             @Override
@@ -172,20 +173,20 @@ public class Login extends AppCompatActivity {
         progressDialog.show();
         mAuth.sendPasswordResetEmail(email)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        progressDialog.dismiss();
-                        if(task.isSuccessful()){
-                            Toast.makeText(Login.this,"Email sent",Toast.LENGTH_LONG).show();
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                progressDialog.dismiss();
+             if(task.isSuccessful()){
+                 Toast.makeText(Login.this,"Email sent",Toast.LENGTH_LONG).show();
 
-                        }
-                        else{
-                            progressDialog.dismiss();
-                            Toast.makeText(Login.this,"Action Couldnt be Completed",Toast.LENGTH_LONG).show();
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
+             }
+             else{
+                 progressDialog.dismiss();
+                 Toast.makeText(Login.this,"Action Couldnt be Completed",Toast.LENGTH_LONG).show();
+             }
+            }
+        })
+             .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         progressDialog.dismiss();
@@ -205,7 +206,7 @@ public class Login extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            progressDialog.dismiss();
+                           progressDialog.dismiss();
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("login success", "loginInWithEmail:success");
                             currentUser = mAuth.getCurrentUser();
@@ -243,21 +244,21 @@ public class Login extends AppCompatActivity {
                         } else {
                             progressDialog.dismiss();
                             // If sign in fails, display a message to the user.
-                            Log.w("failure", "signInWithEmail:failure", task.getException());
+                           Log.w("failure", "signInWithEmail:failure", task.getException());
                             Toast.makeText(Login.this, "Invalid Credentials",
-                                    Toast.LENGTH_SHORT).show();
+                                  Toast.LENGTH_SHORT).show();
 
                         }
 
                         // ...
                     }
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
+        .addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
 
-                    }
-                });
+            }
+        });
     }
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
