@@ -32,15 +32,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        firebaseAuth=FirebaseAuth.getInstance();
+        checkUserStatus();
         bottomNavigationView=findViewById(R.id.bottom_nav);
         frameLayout=findViewById(R.id.frameL);
 
         Toast.makeText(this, UserApi.getInstance().getEmail(), Toast.LENGTH_SHORT).show();
 
-
         //bydefault home
         Home home=new Home();
         getSupportFragmentManager().beginTransaction().replace(R.id.frameL,new Home()).commit();
+
         //FILL FRAMELAYOUT BY FRAGMENT
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -72,16 +75,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-        firebaseAuth=FirebaseAuth.getInstance();
-        checkUserStatus();
     }
-
     private void checkUserStatus() {
         FirebaseUser currentUser=firebaseAuth.getCurrentUser();
         if(currentUser == null ){
             startActivity(new Intent(MainActivity.this,login_signup_getstarted.class));
+            finish();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 
     @Override
@@ -97,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.logoutbtn:
                 firebaseAuth.signOut();
                 startActivity(new Intent(MainActivity.this,login_signup_getstarted.class));
+                finish();
         }
         return super.onOptionsItemSelected(item);
     }
