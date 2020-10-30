@@ -5,30 +5,18 @@ import android.app.Application;
 public class UserApi extends Application {
     String email, uid,phone, image, bio, username, profession, cover, followerCount;
 
-    private static UserApi userApi;
-
-    public UserApi(){}
+    private static UserApi instance;
 
     public static UserApi getInstance()
     {
-        if(userApi == null)
+        if(instance == null)
         {
-            userApi = new UserApi();
+            instance = new UserApi();
         }
-        return userApi;
+        return instance;
     }
 
-    public UserApi(String email, String uid, String phone, String image, String bio, String username, String profession, String cover, String followerCount) {
-        this.email = email;
-        this.uid = uid;
-        this.phone = phone;
-        this.image = image;
-        this.bio = bio;
-        this.username = username;
-        this.profession = profession;
-        this.cover = cover;
-        this.followerCount = followerCount;
-    }
+    public UserApi(){}
 
     public String getEmail() {
         return email;
@@ -102,11 +90,4 @@ public class UserApi extends Application {
         this.followerCount = followerCount;
     }
 
-    public static UserApi getUserApi() {
-        return userApi;
-    }
-
-    public static void setUserApi(UserApi userApi) {
-        UserApi.userApi = userApi;
-    }
 }
