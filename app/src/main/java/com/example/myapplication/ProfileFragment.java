@@ -38,11 +38,15 @@ public class ProfileFragment extends Fragment {
     CircleImageView profile_image_container;
     ImageView coverImageContainer;
     FloatingActionButton editProfileBtn;
+
+
     public ProfileFragment() {
         // Required empty public constructor
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
       }
 
@@ -63,49 +67,51 @@ public class ProfileFragment extends Fragment {
 
         profile_image_container =(CircleImageView) view.findViewById(R.id.fp_profileImage);
         coverImageContainer=view.findViewById(R.id.fp_cover);
+
         editProfileBtn=view.findViewById(R.id.fp_editprofile);
 
-        Query query=databaseReference.orderByChild("uid").equalTo(currentuser.getUid());
-        query.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for ( DataSnapshot ds: snapshot.getChildren()) {
-                    //check if length of name>1 else go to create profile activity and setup activity;
-                    String name= (String) ds.child("username").getValue();
-                    String bio= (String) ds.child("bio").getValue();
-                    String profession= (String) ds.child("profesion").getValue();
-                    String image=  ds.child("image").getValue(String.class);
-                    String cover=  ds.child("cover").getValue(String.class);
-
-                    if((name == null || name.length() == 0 )&&( bio==null || bio.length() ==0) &&( profession==null ||profession.length()==0)){
-                        Toast.makeText(getContext(),"go to create profile"+name,Toast.LENGTH_LONG).show();
-                        startActivity( new Intent(getActivity(),CreateProfile.class));
-                    }
-                    tv_bio.setText(bio);
-                    tv_prof.setText(profession);
-                    tv_username.setText(name);
-                     try{
-                         Log.i("info",image);
-                         Picasso.get().load(image).into(profile_image_container);
-                     }catch (Exception e){
-                         Log.i("exception image",image);
-                         Picasso.get().load(R.drawable.ic_baseline_person_outline_24).into(profile_image_container);
-                     }
-                    try{
-                        Log.i("info",cover);
-                        Picasso.get().load(cover).into(coverImageContainer);
-                    }catch (Exception e){
-                        Log.i("excepton image",cover);
-                        Picasso.get().load(R.drawable.ic_baseline_person_outline_24).into(coverImageContainer);
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+//        Query query=databaseReference.orderByChild("uid").equalTo(currentuser.getUid());
+//        query.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                for ( DataSnapshot ds: snapshot.getChildren()) {
+//                    //check if length of name>1 else go to create profile activity and setup activity;
+//                    String name= (String) ds.child("username").getValue();
+//                    String bio= (String) ds.child("bio").getValue();
+//                    String profession= (String) ds.child("profesion").getValue();
+//                    String image=  ds.child("image").getValue(String.class);
+//                    String cover=  ds.child("cover").getValue(String.class);
+//
+//
+//                    if((name == null || name.length() == 0 )&&( bio==null || bio.length() ==0) &&( profession==null ||profession.length()==0)){
+//                        Toast.makeText(getContext(),"go to create profile"+name,Toast.LENGTH_LONG).show();
+//                        startActivity( new Intent(getActivity(),CreateProfile.class));
+//                    }
+//                    tv_bio.setText(bio);
+//                    tv_prof.setText(profession);
+//                    tv_username.setText(name);
+//                     try{
+//                         Log.i("info",image);
+//                         Picasso.get().load(image).into(profile_image_container);
+//                     }catch (Exception e){
+//                         Log.i("exception image",image);
+//                         Picasso.get().load(R.drawable.ic_baseline_person_outline_24).into(profile_image_container);
+//                     }
+//                    try{
+//                        Log.i("info",cover);
+//                        Picasso.get().load(cover).into(coverImageContainer);
+//                    }catch (Exception e){
+//                        Log.i("excepton image",cover);
+//                        Picasso.get().load(R.drawable.ic_baseline_person_outline_24).into(coverImageContainer);
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
 
         editProfileBtn.setOnClickListener(new View.OnClickListener() {
             @Override

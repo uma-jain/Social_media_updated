@@ -119,7 +119,7 @@ public class Signup extends AppCompatActivity {
                     passwordEt.setError("Password length cannot be less than 4 ");
                     passwordEt.setFocusable(true);
                 }
-               else { registerUser(email,password);}
+                else { registerUser(email,password);}
             }
         });
         redirect.setOnClickListener(new View.OnClickListener() {
@@ -185,8 +185,9 @@ public class Signup extends AppCompatActivity {
                                                                 userApi.setPhone("");
                                                                 userApi.setProfession("");
                                                                 userApi.setUsername("");
+
                                                                 //now pass to mainactivity
-                                                                Toast.makeText(Signup.this, "Registered Successfully",Toast.LENGTH_SHORT).show();
+                                                                Toast.makeText(Signup.this, "Registered Successfully",  Toast.LENGTH_SHORT).show();
                                                                 startActivity(new Intent(Signup.this, MainActivity.class));
                                                                 finish();
 
@@ -296,7 +297,9 @@ public class Signup extends AppCompatActivity {
                                         }
                                     });
 
-                            finish();
+
+//                            startActivity(new Intent(Signup.this,MainActivity.class));
+//                            finish();
                             //
                         } else {
                             // If sign in fails, display a message to the user.

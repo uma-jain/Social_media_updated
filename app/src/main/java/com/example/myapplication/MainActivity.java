@@ -20,12 +20,14 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import org.w3c.dom.Text;
+
 import Utils.UserApi;
 
 public class MainActivity extends AppCompatActivity {
-     FirebaseAuth firebaseAuth;
-     FrameLayout frameLayout;
-     BottomNavigationView bottomNavigationView;
+    FirebaseAuth firebaseAuth;
+    FrameLayout frameLayout;
+    BottomNavigationView bottomNavigationView;
 
 
     @SuppressLint("WrongViewCast")
@@ -68,12 +70,17 @@ public class MainActivity extends AppCompatActivity {
 
                         break;
                     case R.id.Profile:
-                      UserApi  userApi=UserApi.getUserApi();
-                      if(TextUtils.isEmpty(userApi.getUsername()) ){
-                        //  selected=new CreateProfile();
-                      }
-                        selected=new ProfileFragment();
-                         break;
+                        UserApi userApi = UserApi.getInstance();
+                        if(TextUtils.isEmpty(userApi.getUsername()) && TextUtils.isEmpty(userApi.getBio()))
+                        {
+                            //go to create profile fragment
+                        }
+                        else
+                        {
+                            selected=new ProfileFragment();
+                        }
+
+                        break;
                 }
                 getSupportFragmentManager().beginTransaction().replace(R.id.frameL,selected).commit();
                 return true;
