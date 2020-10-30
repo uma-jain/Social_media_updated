@@ -45,8 +45,6 @@ public class ProfileFragment extends Fragment {
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
-
         super.onCreate(savedInstanceState);
       }
 
@@ -56,6 +54,7 @@ public class ProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
         View view=inflater.inflate(R.layout.fragment_profile, container, false);
+
         mAuth=FirebaseAuth.getInstance();
         currentuser=mAuth.getCurrentUser();
         firebaseDatabase=FirebaseDatabase.getInstance();

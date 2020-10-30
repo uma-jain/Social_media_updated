@@ -23,6 +23,7 @@ import com.google.firebase.auth.FirebaseUser;
 import org.w3c.dom.Text;
 
 import Utils.UserApi;
+import fragments.CreateProfileFragment;
 
 public class MainActivity extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
@@ -36,13 +37,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         firebaseAuth=FirebaseAuth.getInstance();
         checkUserStatus();
         bottomNavigationView=findViewById(R.id.bottom_nav);
         frameLayout=findViewById(R.id.frameL);
 
         Toast.makeText(this, UserApi.getInstance().getEmail(), Toast.LENGTH_SHORT).show();
-
         //bydefault home
         Home home=new Home();
         getSupportFragmentManager().beginTransaction().replace(R.id.frameL,new Home()).commit();
@@ -74,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
                         if(TextUtils.isEmpty(userApi.getUsername()) && TextUtils.isEmpty(userApi.getBio()))
                         {
                             //go to create profile fragment
+                            Toast.makeText(MainActivity.this, "profile not  created", Toast.LENGTH_SHORT).show();
+                            selected=new CreateProfileFragment();
                         }
                         else
                         {

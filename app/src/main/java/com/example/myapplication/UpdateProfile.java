@@ -88,7 +88,7 @@ public class UpdateProfile extends AppCompatActivity {
 
                     if ((name == null || name.length() == 0) && (bio == null || bio.length() == 0) && (profession == null || profession.length() == 0)) {
                         Toast.makeText(UpdateProfile.this, "go to create profile" + name, Toast.LENGTH_LONG).show();
-                        startActivity(new Intent(UpdateProfile.this, CreateProfile.class));
+                       // startActivity(new Intent(UpdateProfile.this, CreateProfile.class));
                     }
                     bioEt.setText(bio);
                     ProffEt.setText(profession);

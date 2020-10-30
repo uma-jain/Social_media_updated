@@ -238,7 +238,6 @@ public class Signup extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("success final", "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-
                             //store in realtime database
                             String email=user.getEmail();
                             String uid=user.getUid();
@@ -255,8 +254,8 @@ public class Signup extends AppCompatActivity {
 
                             //this will put the user data into firebase
                             myRef.child(uid).setValue(hashMap);
-
                             //this will put the user data into firestore
+                            collectionReference.whereEqualTo(uid,154854);
                             collectionReference.add(hashMap)
                                     .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                         @Override

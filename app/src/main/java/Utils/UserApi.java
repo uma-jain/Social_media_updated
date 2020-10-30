@@ -7,7 +7,7 @@ public class UserApi extends Application {
 
     private static UserApi userApi;
 
-    public UserApi(){}
+
 
     public static UserApi getInstance()
     {
@@ -17,7 +17,6 @@ public class UserApi extends Application {
         }
         return userApi;
     }
-
     public UserApi(String email, String uid, String phone, String image, String bio, String username, String profession, String cover, String followerCount) {
         this.email = email;
         this.uid = uid;
@@ -29,6 +28,8 @@ public class UserApi extends Application {
         this.cover = cover;
         this.followerCount = followerCount;
     }
+
+    public UserApi(){}
 
     public String getEmail() {
         return email;
