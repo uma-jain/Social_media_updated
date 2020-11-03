@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -9,6 +10,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -66,8 +70,32 @@ public class Home extends Fragment {
         //send it to recycler view
 
 
-
         return view;
+    }
+
+    public void onCreate(Bundle savedInstanceState)
+    {
+        setHasOptionsMenu(true);
+        super.onCreate(savedInstanceState);
+    }
+
+
+    //inflate menu
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_main,menu);
+        super.onCreateOptionsMenu(menu,inflater);
+        firebaseAuth=FirebaseAuth.getInstance();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.logoutbtn:
+                firebaseAuth.signOut();
+                startActivity(new Intent(getActivity(),login_signup_getstarted.class));
+                getActivity().finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 //    private void getDataFromFirestore() {

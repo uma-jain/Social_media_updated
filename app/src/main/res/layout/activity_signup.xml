@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="40dp"
         android:fontFamily="@font/rancho"
         android:gravity="center_horizontal"
         android:shadowColor="@android:color/black"
@@ -23,6 +23,20 @@
         android:shadowRadius="7"
         android:text="Create New Account"
         android:textSize="56dp" />
+    <EditText
+        android:id = "@+id/register_username"
+        android:layout_width = "match_parent"
+        android:hint="Username"
+        android:drawableStart="@drawable/ic_baseline_person_outline_24"
+        android:drawablePadding="20dp"
+        android:padding="10dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_height = "wrap_content"
+        android:background="@drawable/login_signup_btn"
+
+        />
     <EditText
         android:id = "@+id/register_email"
         android:layout_width = "match_parent"
@@ -37,7 +51,6 @@
         android:background="@drawable/login_signup_btn"
 
         />
-
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -83,7 +96,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="30dp"
         app:buttonSize="wide"
         app:colorScheme="dark"
         android:fontFamily="@font/rancho"
@@ -96,7 +109,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_horizontal"
-        android:layout_marginBottom="120dp"
+        android:layout_marginBottom="80dp"
         >
 
         <TextView

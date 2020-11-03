@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardUseCompatPadding="true"
+    app:cardCornerRadius="2dp"
+    android:elevation="2dp"
+    app:cardBackgroundColor="#FAFAFA"
+    app:contentPadding="5dp"
+    android:layout_margin="10dp"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/row_user_civ_profilepic"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_margin="15dp"
+        android:src="@drawable/ic_baseline_person_outline_24" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="15dp"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/row_user_username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Username"
+            android:layout_margin="2dp"
+            android:textColor="#B7D59D"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/row_user_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Email"
+            android:layout_margin="2dp"
+            android:textColor="#B7D59D"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

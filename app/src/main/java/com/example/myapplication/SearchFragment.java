@@ -1,64 +1,193 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.UserManager;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SearchFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import Utils.UserModal;
+import ui.UsersAdapter;
+
 public class SearchFragment extends Fragment {
+    //foriebaseAuth
+    FirebaseAuth firebaseAuth;
+    private FirebaseUser currentUser;
+   //firestore
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private CollectionReference collectionReference = db.collection("Users");
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    RecyclerView recyclerView;
+    UsersAdapter usersAdapter;
+    private List<UserModal> userModalList = new ArrayList<UserModal>();
 
     public SearchFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SearchFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static SearchFragment newInstance(String param1, String param2) {
-        SearchFragment fragment = new SearchFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+         currentUser=FirebaseAuth.getInstance().getCurrentUser();
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_search, container, false);
+        View view=inflater.inflate(R.layout.fragment_search, container, false);
+        recyclerView=view.findViewById(R.id.f_search_recycle_view);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        //getAll users
+        getAllUsers();
+        return view;
+
     }
+    private void getAllUsers() {
+        collectionReference.get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful())
+                        {   userModalList = new ArrayList<UserModal>();
+                            for(QueryDocumentSnapshot documentSnapshots: task.getResult())
+                            {
+                                UserModal user = documentSnapshots.toObject(UserModal.class);
+                               // Log.i("info",user.getEmail());
+                                userModalList.add(user);
+                            }
+                            //adapter
+                            usersAdapter=new UsersAdapter(getActivity(),userModalList);
+                            recyclerView.setAdapter(usersAdapter);
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
+    }
+    private void searchUsers(final String query)
+    {  //get searched results
+        collectionReference.get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful())
+                        {  userModalList = new ArrayList<UserModal>();
+                            for(QueryDocumentSnapshot documentSnapshots: task.getResult())
+                            {
+                                UserModal user = documentSnapshots.toObject(UserModal.class);
+                                // Log.i("info",user.getEmail());
+
+                                if(user.getUsername().toLowerCase().contains(query.toLowerCase())){
+                                    Log.i("info",user.getUsername());
+                                    userModalList.add(user);
+                                }
+                            }
+                            //adapter
+                            usersAdapter=new UsersAdapter(getActivity(),userModalList);
+                            //refrwsh adapter
+                            usersAdapter.notifyDataSetChanged();
+                            recyclerView.setAdapter(usersAdapter);
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
+    }
+    public void onCreate(Bundle savedInstanceState)
+    {
+        setHasOptionsMenu(true);
+        super.onCreate(savedInstanceState);
+    }
+
+
+    //inflate menu
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_main,menu);
+        super.onCreateOptionsMenu(menu,inflater);
+        firebaseAuth=FirebaseAuth.getInstance();
+
+        //SaerchView
+        MenuItem menuItem=menu.findItem(R.id.search_btn);
+        SearchView searchView= (SearchView) MenuItemCompat.getActionView(menuItem);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                //called when user clicks on btn
+                //if search query not empty
+                if(!TextUtils.isEmpty(s.trim())){
+                  //s contains name of user
+                    Log.i("info","get users with name this");
+                    searchUsers(s);
+
+                }else{
+                  getAllUsers();
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                //user enter letter
+                if(!TextUtils.isEmpty(s.trim())){
+                    //s contains name of user
+                    searchUsers(s);
+                }else{
+                    getAllUsers();
+                }
+
+                return false;
+            }
+        });
+
+    }
+
+
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.logoutbtn:
+             firebaseAuth.signOut();
+                startActivity(new Intent(getActivity(),login_signup_getstarted.class));
+                getActivity().finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 }

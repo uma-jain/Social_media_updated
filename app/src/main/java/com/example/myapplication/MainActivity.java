@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.Profile:
                         UserApi userApi = UserApi.getInstance();
-                        if(TextUtils.isEmpty(userApi.getUsername()) && TextUtils.isEmpty(userApi.getBio()))
+                        if(TextUtils.isEmpty(userApi.getBio()))
                         {
                             //go to create profile fragment
                             Toast.makeText(MainActivity.this, "profile not  created", Toast.LENGTH_SHORT).show();
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
                         break;
                 }
-                getSupportFragmentManager().beginTransaction().replace(R.id.frameL,selected).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.frameL,selected).addToBackStack(null).commit();
                 return true;
             }
         });
@@ -105,22 +105,5 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
-    @Override
-    //inflate menu
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main,menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.logoutbtn:
-                firebaseAuth.signOut();
-                startActivity(new Intent(MainActivity.this,login_signup_getstarted.class));
-                finish();
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
 }
