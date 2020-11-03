@@ -5,12 +5,15 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -21,15 +24,19 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.auth.User;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import Utils.PostModel;
 import Utils.UserApi;
+import fragments.CommentsFragment;
 import ui.PostRecyclerAdapter;
 
-public class Home extends Fragment {
+public class Home extends Fragment implements PostRecyclerAdapter.OnPostClickListener {
 
     private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     private FirebaseAuth.AuthStateListener authStateListener;
@@ -37,13 +44,15 @@ public class Home extends Fragment {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private StorageReference storageReference;
 
-    private List<PostModel> postModelList;
+    private List<PostModel> postModelList = new ArrayList<PostModel>();
 
     private PostRecyclerAdapter postRecyclerAdapter;
 
     private RecyclerView recyclerView;
 
-    //private CollectionReference collectionReference = db.collection("post");
+    UserApi userApi = UserApi.getInstance();
+
+    private CollectionReference collectionReference = db.collection("post");
 
 
     public Home() {
@@ -55,14 +64,15 @@ public class Home extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_home, container, false);
 
-        view.findViewById(R.id.recycler_view);
+        recyclerView = view.findViewById(R.id.recycler_view);
+
         UserApi userApi = UserApi.getInstance();
-        //recyclerView.setHasFixedSize(true);
-       // recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
 
         //get data from post collection
-        //getDataFromFirestore();
+        getDataFromFirestore();
         //send it to recycler view
 
 
@@ -70,31 +80,47 @@ public class Home extends Fragment {
         return view;
     }
 
-//    private void getDataFromFirestore() {
-//
-//        collectionReference.get()
-//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                        if(task.isSuccessful())
-//                        {
-//                            for(QueryDocumentSnapshot documentSnapshots: task.getResult())
-//                            {
-//                                PostModel p = documentSnapshots.toObject(PostModel.class);
-//                                postModelList.add(p);
-//                            }
-//
-//                            //postRecyclerAdapter = new PostRecyclerAdapter(postModelList);
-//                           // recyclerView.setAdapter(postRecyclerAdapter);
-//                        }
-//                    }
-//                })
-//                .addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//
-//                    }
-//                });
-//
-//    }
+    private void getDataFromFirestore() {
+
+        collectionReference.get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful())
+                        {
+                            for(QueryDocumentSnapshot documentSnapshots: task.getResult())
+                            {
+                                PostModel p = documentSnapshots.toObject(PostModel.class);
+                                postModelList.add(p);
+                            }
+
+                            postRecyclerAdapter = new PostRecyclerAdapter(postModelList, Home.this);
+                            recyclerView.setAdapter(postRecyclerAdapter);
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
+
+    }
+
+    @Override
+    public void onPostClick(int position) {
+        Toast.makeText(getContext(), "psotion"+position, Toast.LENGTH_SHORT).show();
+        Bundle b = new Bundle();
+        PostModel p = postModelList.get(position);
+        b.putSerializable("postmodel", p);
+//        b.putSerializable("hashMap", postModelList.get(position).getComments());
+
+        CommentsFragment cf = new CommentsFragment();
+        cf.setArguments(b);
+
+        FragmentManager fragmentManager=getFragmentManager();
+        FragmentTransaction fragmentTransaction= Objects.requireNonNull(fragmentManager).beginTransaction();
+        fragmentTransaction.replace(R.id.frame_home,cf).addToBackStack(null).commit();
+    }
 }

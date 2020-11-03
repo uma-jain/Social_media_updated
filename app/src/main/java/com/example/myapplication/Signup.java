@@ -39,8 +39,12 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.auth.User;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -142,10 +146,12 @@ public class Signup extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("info", "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+                            final ArrayList<String> ids = new ArrayList<String>();
+
                             //store in realtime database
                             String email=user.getEmail();
                             String uid=user.getUid();
-                            HashMap<Object,String> hashMap=new HashMap<>();
+                            HashMap<Object,Object> hashMap=new HashMap<>();
                             hashMap.put("email",email);
                             hashMap.put("uid",uid);
                             hashMap.put("phone","");
@@ -155,6 +161,8 @@ public class Signup extends AppCompatActivity {
                             hashMap.put("profession","");
                             hashMap.put("cover","");
                             hashMap.put("follower", "0");
+                            hashMap.put("messageuids", ids);
+
                             myRef.child(uid).setValue(hashMap);
 
                             //this will put the user data into firestore
@@ -185,6 +193,7 @@ public class Signup extends AppCompatActivity {
                                                                 userApi.setPhone("");
                                                                 userApi.setProfession("");
                                                                 userApi.setUsername("");
+                                                                userApi.setAl(ids);
 
                                                                 //now pass to mainactivity
                                                                 Toast.makeText(Signup.this, "Registered Successfully",  Toast.LENGTH_SHORT).show();
@@ -238,11 +247,12 @@ public class Signup extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("success final", "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+                            final ArrayList<String> ids = new ArrayList<String>();
 
                             //store in realtime database
                             String email=user.getEmail();
                             String uid=user.getUid();
-                            HashMap<Object,String> hashMap=new HashMap<>();
+                            final HashMap<Object,Object> hashMap=new HashMap<>();
                             hashMap.put("email",email);
                             hashMap.put("uid",uid);
                             hashMap.put("phone","");
@@ -252,6 +262,7 @@ public class Signup extends AppCompatActivity {
                             hashMap.put("profesion","");
                             hashMap.put("cover","");
                             hashMap.put("followerCount", "");
+                            hashMap.put("messageuids", ids);
 
                             //this will put the user data into firebase
                             myRef.child(uid).setValue(hashMap);
@@ -284,6 +295,7 @@ public class Signup extends AppCompatActivity {
                                                                 userApi.setPhone("");
                                                                 userApi.setProfession("");
                                                                 userApi.setUsername("");
+                                                                userApi.setAl(ids);
 
                                                                 //now pass to mainactivity
                                                                 Toast.makeText(Signup.this, "Welcome ",

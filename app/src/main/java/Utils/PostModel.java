@@ -1,20 +1,54 @@
 package Utils;
 
-public class PostModel {
-    private String uid, imageUrl, postTitle, postDescription, postId, timestamp, likes, userName;
+import com.google.firebase.Timestamp;
+
+import java.io.Serializable;
+import java.util.HashMap;
+
+public class PostModel implements Serializable {
+    private String uid, imageUrl, postTitle, postDescription, postId, likes, userName, commentCnt, profileUrl;
+    private HashMap<String, String> comments;
+    private Timestamp timestamp;
 
     public PostModel() {
     }
 
-    public PostModel(String uid, String imageUrl, String postTitle, String postDescription, String postId, String timestamp, String likes, String userName) {
+    public PostModel(String uid, String imageUrl, String postTitle, String postDescription, String postId, String likes, String userName, String commentCnt, String profileUrl, HashMap<String, String> comments, Timestamp timestamp) {
         this.uid = uid;
         this.imageUrl = imageUrl;
         this.postTitle = postTitle;
         this.postDescription = postDescription;
         this.postId = postId;
-        this.timestamp = timestamp;
         this.likes = likes;
         this.userName = userName;
+        this.commentCnt = commentCnt;
+        this.profileUrl = profileUrl;
+        this.comments = comments;
+        this.timestamp = timestamp;
+    }
+
+    public String getProfileUrl() {
+        return profileUrl;
+    }
+
+    public void setProfileUrl(String profileUrl) {
+        this.profileUrl = profileUrl;
+    }
+
+    public String getCommentCnt() {
+        return commentCnt;
+    }
+
+    public void setCommentCnt(String commentCnt) {
+        this.commentCnt = commentCnt;
+    }
+
+    public HashMap<String, String> getComments() {
+        return comments;
+    }
+
+    public void setComments(HashMap<String, String> comments) {
+        this.comments = comments;
     }
 
     public String getUserName() {
@@ -65,11 +99,11 @@ public class PostModel {
         this.postId = postId;
     }
 
-    public String getTimestamp() {
+    public Timestamp getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(String timestamp) {
+    public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
     }
 

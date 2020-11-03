@@ -2,9 +2,13 @@ package Utils;
 
 import android.app.Application;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 public class UserApi extends Application {
     String email, uid,phone, image, bio, username, profession, cover, followerCount;
-
+    ArrayList<String> al = new ArrayList<String>();
     private static UserApi instance;
 
     public static UserApi getInstance()
@@ -17,6 +21,14 @@ public class UserApi extends Application {
     }
 
     public UserApi(){}
+
+    public ArrayList<String> getAl() {
+        return al;
+    }
+
+    public void setAl(ArrayList<String> al) {
+        this.al = al;
+    }
 
     public String getEmail() {
         return email;

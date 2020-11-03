@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView=findViewById(R.id.bottom_nav);
         frameLayout=findViewById(R.id.frameL);
 
-        Toast.makeText(this, UserApi.getInstance().getEmail(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, UserApi.getInstance().getUid(), Toast.LENGTH_SHORT).show();
 
         //bydefault home
         Home home=new Home();
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
 
                         break;
                 }
-                getSupportFragmentManager().beginTransaction().replace(R.id.frameL,selected).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.frameL,selected).addToBackStack(null).commit();
                 return true;
             }
         });
