@@ -69,6 +69,7 @@ public class login_signup_getstarted extends AppCompatActivity {
                                             userApi.setPhone(snapshot.getString("phone"));
                                             userApi.setProfession(snapshot.getString("profession"));
                                             userApi.setUsername(snapshot.getString("username"));
+                                            userApi.setUid(snapshot.getString("uid"));
 
                                             startActivity(new Intent(login_signup_getstarted.this,MainActivity.class));
                                             finish();
