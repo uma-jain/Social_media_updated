@@ -53,7 +53,7 @@ public class Signup extends AppCompatActivity {
     DatabaseReference myRef = database.getReference("Users");
 
     ProgressDialog progressDialog;
-    EditText userNameEt,emailEt,passwordEt;
+    EditText emailEt,passwordEt;
     TextView redirect;
     Button registerbtn;
     SignInButton registerwithgooglebtn;
@@ -71,7 +71,6 @@ public class Signup extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
-        userNameEt=findViewById(R.id.register_username);
         emailEt=findViewById(R.id.register_email);
         passwordEt=findViewById(R.id.register_password);
         redirect=findViewById(R.id.register_signuptologinredirect);
@@ -90,8 +89,11 @@ public class Signup extends AppCompatActivity {
         registerwithgooglebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 Intent signInIntent = mGoogleSignInClient.getSignInIntent();
                 startActivityForResult(signInIntent, RC_SIGN_IN);
+
+
             }
         });
 
@@ -100,15 +102,15 @@ public class Signup extends AppCompatActivity {
         registerbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String email,password,username;
+                String email,password;
                 email=emailEt.getText().toString().trim();
                 password=passwordEt.getText().toString().trim();
-                username=userNameEt.getText().toString().trim();
                 //validate email
 
                 if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
                     //set error msg
                     Log.i("invalid email","invlaid email");
+
                     emailEt.setError("Invalid Email");
                     emailEt.setFocusable(true);
                 }
@@ -117,12 +119,7 @@ public class Signup extends AppCompatActivity {
                     passwordEt.setError("Password length cannot be less than 4 ");
                     passwordEt.setFocusable(true);
                 }
-                else if(TextUtils.isEmpty(username)){
-                    Log.i("invalid username","invlaid pass");
-                    userNameEt.setError("Username Cannot be Empty");
-                    userNameEt.setFocusable(true);
-                }
-                else { registerUser(username,email,password);}
+                else { registerUser(email,password);}
             }
         });
         redirect.setOnClickListener(new View.OnClickListener() {
@@ -134,7 +131,7 @@ public class Signup extends AppCompatActivity {
         });
     }
 
-    private void registerUser(final String username, String email, String password) {
+    private void registerUser(String email, String password) {
         progressDialog.show();
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -154,7 +151,7 @@ public class Signup extends AppCompatActivity {
                             hashMap.put("phone","");
                             hashMap.put("image","");
                             hashMap.put("bio","");
-                            hashMap.put("username",username);
+                            hashMap.put("username","");
                             hashMap.put("profession","");
                             hashMap.put("cover","");
                             hashMap.put("follower", "0");
@@ -187,7 +184,7 @@ public class Signup extends AppCompatActivity {
                                                                 userApi.setImage("");
                                                                 userApi.setPhone("");
                                                                 userApi.setProfession("");
-                                                                userApi.setUsername(username);
+                                                                userApi.setUsername("");
 
                                                                 //now pass to mainactivity
                                                                 Toast.makeText(Signup.this, "Registered Successfully",  Toast.LENGTH_SHORT).show();
@@ -241,6 +238,7 @@ public class Signup extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("success final", "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+
                             //store in realtime database
                             String email=user.getEmail();
                             String uid=user.getUid();
@@ -250,15 +248,15 @@ public class Signup extends AppCompatActivity {
                             hashMap.put("phone","");
                             hashMap.put("image","");
                             hashMap.put("bio","");
-                            hashMap.put("username",email);
-                            hashMap.put("profession","");
+                            hashMap.put("username","");
+                            hashMap.put("profesion","");
                             hashMap.put("cover","");
                             hashMap.put("followerCount", "");
 
                             //this will put the user data into firebase
                             myRef.child(uid).setValue(hashMap);
+
                             //this will put the user data into firestore
-                            collectionReference.whereEqualTo(uid,154854);
                             collectionReference.add(hashMap)
                                     .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                         @Override
@@ -284,7 +282,7 @@ public class Signup extends AppCompatActivity {
                                                                 userApi.setFollowerCount("0");
                                                                 userApi.setImage("");
                                                                 userApi.setPhone("");
-                                                                userApi.setProfession(email);
+                                                                userApi.setProfession("");
                                                                 userApi.setUsername("");
 
                                                                 //now pass to mainactivity
