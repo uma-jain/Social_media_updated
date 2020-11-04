@@ -12,6 +12,7 @@ import android.text.Layout;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -37,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         firebaseAuth=FirebaseAuth.getInstance();
-        checkUserStatus();
+        //checkUserStatus();
         bottomNavigationView=findViewById(R.id.bottom_nav);
         frameLayout=findViewById(R.id.frameL);
 
@@ -45,7 +46,8 @@ public class MainActivity extends AppCompatActivity {
 
         //bydefault home
         Home home=new Home();
-        getSupportFragmentManager().beginTransaction().replace(R.id.frameL,new Home()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.frameL,new Home()).addToBackStack(null).commit();
+        //getSupportFragmentManager().beginTransaction().replace(R.id.frameL,new AddFragment()).addToBackStack(null).commit();
 
         //FILL FRAMELAYOUT BY FRAGMENT
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -76,7 +78,9 @@ public class MainActivity extends AppCompatActivity {
                             //go to create profile fragment
                         }
                         else
-                        { selected=new ProfileFragment();}
+                        {
+                            selected=new ProfileFragment();
+                        }
 
                         break;
                 }
@@ -86,16 +90,39 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-    private void checkUserStatus() {
-        FirebaseUser currentUser=firebaseAuth.getCurrentUser();
-        if(currentUser == null ){
-            startActivity(new Intent(MainActivity.this,login_signup_getstarted.class));
-            finish();
-        }
-    }
+//    private void checkUserStatus() {
+//        FirebaseUser currentUser=firebaseAuth.getCurrentUser();
+//        if(currentUser == null ){
+//            startActivity(new Intent(MainActivity.this,login_signup_getstarted.class));
+//            finish();
+//        }
+//    }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-    }
+//    @Override
+//    public void onBackPressed() {
+//        super.onBackPressed();
+//        finish();
+//    }
+
+//    @Override
+//    //inflate menu
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.menu_main,menu);
+//
+//        MenuItem menuItem = menu.findItem(R.id.search_btn);
+//        menuItem.setVisible(false);
+//        return super.onCreateOptionsMenu(menu);
+//    }
+
+//    @Override
+//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+//        switch (item.getItemId()){
+//            case R.id.logoutbtn:
+//                firebaseAuth.signOut();
+//                startActivity(new Intent(MainActivity.this,login_signup_getstarted.class));
+//                finish();
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
+
 }
