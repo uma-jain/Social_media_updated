@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -31,7 +30,6 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.auth.User;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
@@ -86,6 +84,26 @@ public class Home extends Fragment implements PostRecyclerAdapter.OnPostClickLis
 
         return view;
     }
+    public void onCreate(Bundle savedInstanceState)
+    {
+        setHasOptionsMenu(true);
+        super.onCreate(savedInstanceState);
+    }
+    //inflate menu
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) { inflater.inflate(R.menu.menu_main,menu);
+    super.onCreateOptionsMenu(menu,inflater);
+    }
+
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        switch (item.getItemId()){
+            case R.id.logoutbtn:
+                firebaseAuth.signOut();
+                startActivity(new Intent(getActivity(),login_signup_getstarted.class));
+                getActivity().finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
 
     private void getDataFromFirestore() {
@@ -116,30 +134,6 @@ public class Home extends Fragment implements PostRecyclerAdapter.OnPostClickLis
 
     }
 
-    public void onCreate(Bundle savedInstanceState)
-    {
-        setHasOptionsMenu(true);
-        super.onCreate(savedInstanceState);
-    }
-
-    //inflate menu
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_main,menu);
-        MenuItem menuItem = menu.findItem(R.id.search_btn);
-        menuItem.setVisible(false);
-        super.onCreateOptionsMenu(menu,inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.logoutbtn:
-                firebaseAuth.signOut();
-                startActivity(new Intent(getActivity(),login_signup_getstarted.class));
-                getActivity();
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     public void onPostClick(int position) {
@@ -156,4 +150,5 @@ public class Home extends Fragment implements PostRecyclerAdapter.OnPostClickLis
         FragmentTransaction fragmentTransaction= Objects.requireNonNull(fragmentManager).beginTransaction();
         fragmentTransaction.replace(R.id.frame_home,cf).addToBackStack(null).commit();
     }
+
 }
