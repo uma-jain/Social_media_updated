@@ -1,6 +1,8 @@
 package Utils;
 
-public class UserModal {
+import java.io.Serializable;
+
+public class UserModal implements Serializable {
     String  uid,username,email,phone,search,image,cover,profession;
     public UserModal() {
     }
