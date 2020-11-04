@@ -14,6 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".Personal_Chat_Activity"></activity>
         <activity
             android:name=".login_signup_getstarted"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />

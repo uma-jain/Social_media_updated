@@ -76,13 +76,11 @@ public class MainActivity extends AppCompatActivity {
                             //go to create profile fragment
                         }
                         else
-                        {
-                            selected=new ProfileFragment();
-                        }
+                        { selected=new ProfileFragment();}
 
                         break;
                 }
-                getSupportFragmentManager().beginTransaction().replace(R.id.frameL,selected).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.frameL,selected).addToBackStack(null).commit();
                 return true;
             }
         });
@@ -99,25 +97,5 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        finish();
     }
-
-    @Override
-    //inflate menu
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main,menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.logoutbtn:
-                firebaseAuth.signOut();
-                startActivity(new Intent(MainActivity.this,login_signup_getstarted.class));
-                finish();
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
 }

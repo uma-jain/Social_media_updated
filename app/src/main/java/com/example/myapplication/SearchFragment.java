@@ -44,7 +44,7 @@ public class SearchFragment extends Fragment {
     //foriebaseAuth
     FirebaseAuth firebaseAuth;
     private FirebaseUser currentUser;
-   //firestore
+    //firestore
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference collectionReference = db.collection("Users");
 
@@ -58,7 +58,7 @@ public class SearchFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-         currentUser=FirebaseAuth.getInstance().getCurrentUser();
+        currentUser=FirebaseAuth.getInstance().getCurrentUser();
         // Inflate the layout for this fragment
         View view=inflater.inflate(R.layout.fragment_search, container, false);
         recyclerView=view.findViewById(R.id.f_search_recycle_view);
@@ -80,7 +80,7 @@ public class SearchFragment extends Fragment {
                             for(QueryDocumentSnapshot documentSnapshots: task.getResult())
                             {
                                 UserModal user = documentSnapshots.toObject(UserModal.class);
-                               // Log.i("info",user.getEmail());
+                                // Log.i("info",user.getEmail());
                                 userModalList.add(user);
                             }
                             //adapter
@@ -137,26 +137,25 @@ public class SearchFragment extends Fragment {
 
 
     //inflate menu
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_main,menu);
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) { inflater.inflate(R.menu.menu_main,menu);
         super.onCreateOptionsMenu(menu,inflater);
         firebaseAuth=FirebaseAuth.getInstance();
 
         //SaerchView
         MenuItem menuItem=menu.findItem(R.id.search_btn);
-        SearchView searchView= (SearchView) MenuItemCompat.getActionView(menuItem);
+       SearchView searchView= (SearchView) MenuItemCompat.getActionView(menuItem);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 //called when user clicks on btn
                 //if search query not empty
                 if(!TextUtils.isEmpty(s.trim())){
-                  //s contains name of user
+                    //s contains name of user
                     Log.i("info","get users with name this");
                     searchUsers(s);
 
                 }else{
-                  getAllUsers();
+                    getAllUsers();
                 }
                 return false;
             }
@@ -183,7 +182,7 @@ public class SearchFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.logoutbtn:
-             firebaseAuth.signOut();
+                firebaseAuth.signOut();
                 startActivity(new Intent(getActivity(),login_signup_getstarted.class));
                 getActivity().finish();
         }
