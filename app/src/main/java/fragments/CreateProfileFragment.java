@@ -9,8 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import Utils.UserApi;
-
 public class CreateProfileFragment extends Fragment {
     public CreateProfileFragment()
     {
@@ -20,9 +18,6 @@ public class CreateProfileFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view =  super.onCreateView(inflater, container, savedInstanceState);
-        
-
-        return view;
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
 }

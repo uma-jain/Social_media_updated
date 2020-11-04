@@ -35,13 +35,13 @@ public class login_signup_getstarted extends AppCompatActivity {
         setContentView(R.layout.activity_login_signup_getstarted);
         firebaseAuth=FirebaseAuth.getInstance();
         currentUser = firebaseAuth.getCurrentUser();
+
+
         //if user authenticated and profile is created go to main activity
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-
                 if(currentUser != null ){
-
                     final String currentUserId = currentUser.getUid();
 
                     collectionReference.whereEqualTo("uid", currentUserId)
