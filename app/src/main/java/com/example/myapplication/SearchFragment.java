@@ -203,12 +203,12 @@ public class SearchFragment extends Fragment implements UsersAdapter.OnUserClick
         Toast.makeText(getContext(), userModalList.get(position).getUid(), Toast.LENGTH_SHORT).show();
                 //go to mainactivity2
 
-//        Bundle bundle = new Bundle();
-//        UserModal userModal = userModalList.get(position);
-//        bundle.putSerializable("userModel",userModal);
-//        Intent intent = new Intent(getContext(), Personal_Chat_Activity.class);
-//        intent.putExtras(bundle);
-
+        Bundle bundle = new Bundle();
+        UserModal userModal = userModalList.get(position);
+        bundle.putSerializable("userModel",userModal);
+        Intent intent = new Intent(getContext(), Personal_Chat_Activity.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
 
         //while getting this bundle in chatactivity
 //        Intent intent = this.getIntent();
