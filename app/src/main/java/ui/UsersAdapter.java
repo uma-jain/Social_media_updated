@@ -59,6 +59,12 @@ public class UsersAdapter extends  RecyclerView.Adapter<UsersAdapter.MyHolder> {
             @Override
             public void onClick(View view) {
                 Toast.makeText(context,userModelList.get(i).getUid(),Toast.LENGTH_LONG).show();
+                //go to mainactivity2
+
+//              Intent intent = new Intent(context, MainActivity2.class);
+//              intent.putExtra("uid", userModelList.get(i).getUid());
+//              context.startActivity(intent);
+
             }
         });
 

@@ -2,11 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-  <item android:title="Logout" android:id="@+id/logoutbtn"></item>
+  <item android:title="Logout" android:id="@+id/logoutbtn" />
+
+
   <item android:title="Search"
       android:icon="@drawable/ic_baseline_search_24"
       android:id="@+id/search_btn"
       app:showAsAction="always"
-      app:actionViewClass="android.widget.SearchView"></item>
+      app:actionViewClass="android.widget.SearchView"/>
 
 </menu>

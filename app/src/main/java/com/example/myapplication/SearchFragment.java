@@ -20,7 +20,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
 
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -103,7 +102,8 @@ public class SearchFragment extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if(task.isSuccessful())
-                        {  userModalList = new ArrayList<UserModal>();
+                        {
+                            userModalList = new ArrayList<UserModal>();
                             for(QueryDocumentSnapshot documentSnapshots: task.getResult())
                             {
                                 UserModal user = documentSnapshots.toObject(UserModal.class);
@@ -116,7 +116,7 @@ public class SearchFragment extends Fragment {
                             }
                             //adapter
                             usersAdapter=new UsersAdapter(getActivity(),userModalList);
-                            //refrwsh adapter
+                            //refresh adapter
                             usersAdapter.notifyDataSetChanged();
                             recyclerView.setAdapter(usersAdapter);
                         }
@@ -140,11 +140,17 @@ public class SearchFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_main,menu);
         super.onCreateOptionsMenu(menu,inflater);
+        MenuItem menuItem = menu.findItem(R.id.search_btn);
+        menuItem.setVisible(true);
         firebaseAuth=FirebaseAuth.getInstance();
 
         //SaerchView
-        MenuItem menuItem=menu.findItem(R.id.search_btn);
-        SearchView searchView= (SearchView) MenuItemCompat.getActionView(menuItem);
+       // MenuItem menuItem=menu.findItem(R.id.search_btn);
+
+//        MenuItem search = menu.findItem(R.id.action_search);
+//        SearchView searchView = (SearchView) search.getActionView();
+
+        SearchView searchView= (SearchView) menuItem.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
