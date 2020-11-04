@@ -90,8 +90,12 @@ public class Home extends Fragment implements PostRecyclerAdapter.OnPostClickLis
         super.onCreate(savedInstanceState);
     }
     //inflate menu
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) { inflater.inflate(R.menu.menu_main,menu);
-    super.onCreateOptionsMenu(menu,inflater);
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
+    {
+        inflater.inflate(R.menu.menu_main,menu);
+        MenuItem menuItem = menu.findItem(R.id.search_btn);
+        menuItem.setVisible(false);
+        super.onCreateOptionsMenu(menu,inflater);
     }
 
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {

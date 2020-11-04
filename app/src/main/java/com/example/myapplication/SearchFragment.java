@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -39,7 +40,7 @@ import java.util.List;
 import Utils.UserModal;
 import ui.UsersAdapter;
 
-public class SearchFragment extends Fragment {
+public class SearchFragment extends Fragment implements UsersAdapter.OnUserClickListener {
     //foriebaseAuth
     FirebaseAuth firebaseAuth;
     private FirebaseUser currentUser;
@@ -83,7 +84,7 @@ public class SearchFragment extends Fragment {
                                 userModalList.add(user);
                             }
                             //adapter
-                            usersAdapter=new UsersAdapter(getActivity(),userModalList);
+                            usersAdapter=new UsersAdapter(getActivity(),userModalList, SearchFragment.this);
                             recyclerView.setAdapter(usersAdapter);
                         }
                     }
@@ -115,7 +116,7 @@ public class SearchFragment extends Fragment {
                                 }
                             }
                             //adapter
-                            usersAdapter=new UsersAdapter(getActivity(),userModalList);
+                            usersAdapter=new UsersAdapter(getActivity(),userModalList,SearchFragment.this);
                             //refresh adapter
                             usersAdapter.notifyDataSetChanged();
                             recyclerView.setAdapter(usersAdapter);
@@ -196,4 +197,29 @@ public class SearchFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onUserClick(int position) {
+
+        Toast.makeText(getContext(), userModalList.get(position).getUid(), Toast.LENGTH_SHORT).show();
+                //go to mainactivity2
+
+        Bundle bundle = new Bundle();
+        UserModal userModal = userModalList.get(position);
+        bundle.putSerializable("userModel",userModal);
+        Intent intent = new Intent(getContext(), Personal_Chat_Activity.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
+
+        //while getting this bundle in chatactivity
+//        Intent intent = this.getIntent();
+//        Bundle bundle = intent.getExtras();
+//
+//        List<Thumbnail> thumbs=
+//                (List<Thumbnail>)bundle.getSerializable("value");
+
+//
+//              Intent intent = new Intent(context, ChatActivity.class);
+//              intent.putExtra("uid", userModelList.get(i).getUid());
+//              context.startActivity(intent);
+    }
 }
