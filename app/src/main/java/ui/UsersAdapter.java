@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -82,6 +83,7 @@ public class UsersAdapter extends  RecyclerView.Adapter<UsersAdapter.MyHolder> {
 
         CircleImageView imageView;
         TextView tv_username,tv_email;
+        ImageView rowGoToChatActivity;
 
         OnUserClickListener onUserClickListener;
 
@@ -92,9 +94,10 @@ public class UsersAdapter extends  RecyclerView.Adapter<UsersAdapter.MyHolder> {
             imageView=itemView.findViewById(R.id.row_user_civ_profilepic);
             tv_email=itemView.findViewById(R.id.row_user_email);
             tv_username=itemView.findViewById(R.id.row_user_username);
+            rowGoToChatActivity = itemView.findViewById(R.id.row_user_goto_chatActivity);
             this.onUserClickListener = onUserClickListener;
 
-            itemView.setOnClickListener(this);
+           rowGoToChatActivity.setOnClickListener(this);
         }
 
         @Override
