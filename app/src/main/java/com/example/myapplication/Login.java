@@ -42,6 +42,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SnapshotMetadata;
 
+import java.util.List;
+
 import Utils.UserApi;
 
 public class Login extends AppCompatActivity {
@@ -128,6 +130,7 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(Login.this,Signup.class));
+                finish();
 
             }
         });
@@ -314,6 +317,7 @@ public class Login extends AppCompatActivity {
                                                     userApi.setProfession(snapshot.getString("profession"));
                                                     userApi.setUsername(snapshot.getString("username"));
                                                     userApi.setFollowerCount(snapshot.getString("followerCount"));
+                                                    List<String> commentsUserIds = (List<String>) snapshot.get("commentsUserIds");
 
                                                     startActivity(new Intent(Login.this, MainActivity.class));
                                                     finish();

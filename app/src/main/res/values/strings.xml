@@ -2,4 +2,17 @@
     <string name="app_name">My Application</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="user_name">user Name</string>
+    <string name="todo">TODO</string>
+    <string name="title">title</string>
+    <string name="description">description</string>
+    <string name="_20_50_50">20-50-50</string>
+    <string name="see_all_700_comments"><![CDATA[See All 700 comments --->]]></string>
+    <string name="post">Post</string>
+    <string name="timmy_aditya">Timmy aditya</string>
+    <string name="binod_binod_binod">binod binod binod</string>
+    <string name="add_a_comment">Add A Comment</string>
+    <string name="enter_delivery_address_from_this_order">enter_delivery_address_from_this_order</string>
+    <string name="add">Add</string>
+    <string name="enter_comment">Enter comment</string>
 </resources>

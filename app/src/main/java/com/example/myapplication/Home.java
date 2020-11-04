@@ -2,47 +2,125 @@ package com.example.myapplication;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link Home#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class Home extends Fragment {
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.auth.User;
+import com.google.firebase.storage.StorageReference;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+import Utils.PostModel;
+import Utils.UserApi;
+import fragments.CommentsFragment;
+import ui.PostRecyclerAdapter;
+
+public class Home extends Fragment implements PostRecyclerAdapter.OnPostClickListener {
+
+    private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    private FirebaseAuth.AuthStateListener authStateListener;
+    private FirebaseUser currentUser;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private StorageReference storageReference;
+
+    private List<PostModel> postModelList = new ArrayList<PostModel>();
+
+    private PostRecyclerAdapter postRecyclerAdapter;
+
+    private RecyclerView recyclerView;
+
+    UserApi userApi = UserApi.getInstance();
+
+    private CollectionReference collectionReference = db.collection("post");
+
 
     public Home() {
         // Required empty public constructor
     }
 
-      @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view =  inflater.inflate(R.layout.fragment_home, container, false);
+
+        recyclerView = view.findViewById(R.id.recycler_view);
+
+        UserApi userApi = UserApi.getInstance();
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+
+        //get data from post collection
+        getDataFromFirestore();
+        //send it to recycler view
+
+
+
+        return view;
+    }
+
+    private void getDataFromFirestore() {
+
+        collectionReference.get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful())
+                        {
+                            for(QueryDocumentSnapshot documentSnapshots: task.getResult())
+                            {
+                                PostModel p = documentSnapshots.toObject(PostModel.class);
+                                postModelList.add(p);
+                            }
+
+                            postRecyclerAdapter = new PostRecyclerAdapter(postModelList, Home.this);
+                            recyclerView.setAdapter(postRecyclerAdapter);
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
+
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
-        return inflater.inflate(R.layout.fragment_home, container, false);
+    public void onPostClick(int position) {
+        Toast.makeText(getContext(), "psotion"+position, Toast.LENGTH_SHORT).show();
+        Bundle b = new Bundle();
+        PostModel p = postModelList.get(position);
+        b.putSerializable("postmodel", p);
+//        b.putSerializable("hashMap", postModelList.get(position).getComments());
+
+        CommentsFragment cf = new CommentsFragment();
+        cf.setArguments(b);
+
+        FragmentManager fragmentManager=getFragmentManager();
+        FragmentTransaction fragmentTransaction= Objects.requireNonNull(fragmentManager).beginTransaction();
+        fragmentTransaction.replace(R.id.frame_home,cf).addToBackStack(null).commit();
     }
 }

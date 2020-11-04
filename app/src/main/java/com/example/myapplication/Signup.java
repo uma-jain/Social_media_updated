@@ -49,10 +49,8 @@ import Utils.UserApi;
 public class Signup extends AppCompatActivity {
     private static final int RC_SIGN_IN = 100;
     GoogleSignInClient mGoogleSignInClient;
-
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef = database.getReference("Users");
-
 
     ProgressDialog progressDialog;
     EditText emailEt,passwordEt;
@@ -95,6 +93,7 @@ public class Signup extends AppCompatActivity {
                 Intent signInIntent = mGoogleSignInClient.getSignInIntent();
                 startActivityForResult(signInIntent, RC_SIGN_IN);
 
+
             }
         });
 
@@ -120,13 +119,14 @@ public class Signup extends AppCompatActivity {
                     passwordEt.setError("Password length cannot be less than 4 ");
                     passwordEt.setFocusable(true);
                 }
-               else { registerUser(email,password);}
+                else { registerUser(email,password);}
             }
         });
         redirect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(Signup.this,Login.class));
+                finish();
             }
         });
     }
@@ -187,19 +187,15 @@ public class Signup extends AppCompatActivity {
                                                                 userApi.setUsername("");
 
                                                                 //now pass to mainactivity
+                                                                Toast.makeText(Signup.this, "Registered Successfully",  Toast.LENGTH_SHORT).show();
                                                                 startActivity(new Intent(Signup.this, MainActivity.class));
+                                                                finish();
 
                                                             }
                                                         }
                                                     });
                                         }
                                     });
-
-
-
-                            Toast.makeText(Signup.this, "Registered Successfully",
-                                    Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(Signup.this,MainActivity.class));
                         } else {
                             // If sign in fails, display a message to the user.
                             progressDialog.dismiss();
@@ -290,7 +286,10 @@ public class Signup extends AppCompatActivity {
                                                                 userApi.setUsername("");
 
                                                                 //now pass to mainactivity
+                                                                Toast.makeText(Signup.this, "Welcome ",
+                                                                        Toast.LENGTH_SHORT).show();
                                                                 startActivity(new Intent(Signup.this, MainActivity.class));
+                                                                finish();
 
                                                             }
                                                         }
@@ -298,9 +297,9 @@ public class Signup extends AppCompatActivity {
                                         }
                                     });
 
-                            Toast.makeText(Signup.this, "Welcome ",
-                                    Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(Signup.this,MainActivity.class));
+
+//                            startActivity(new Intent(Signup.this,MainActivity.class));
+//                            finish();
                             //
                         } else {
                             // If sign in fails, display a message to the user.

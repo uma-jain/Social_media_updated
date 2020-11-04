@@ -9,6 +9,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Layout;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
@@ -19,12 +20,14 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import org.w3c.dom.Text;
+
 import Utils.UserApi;
 
 public class MainActivity extends AppCompatActivity {
-     FirebaseAuth firebaseAuth;
-     FrameLayout frameLayout;
-     BottomNavigationView bottomNavigationView;
+    FirebaseAuth firebaseAuth;
+    FrameLayout frameLayout;
+    BottomNavigationView bottomNavigationView;
 
 
     @SuppressLint("WrongViewCast")
@@ -32,15 +35,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        firebaseAuth=FirebaseAuth.getInstance();
+        checkUserStatus();
         bottomNavigationView=findViewById(R.id.bottom_nav);
         frameLayout=findViewById(R.id.frameL);
 
         Toast.makeText(this, UserApi.getInstance().getEmail(), Toast.LENGTH_SHORT).show();
 
-
         //bydefault home
         Home home=new Home();
         getSupportFragmentManager().beginTransaction().replace(R.id.frameL,new Home()).commit();
+
         //FILL FRAMELAYOUT BY FRAGMENT
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -64,24 +70,36 @@ public class MainActivity extends AppCompatActivity {
 
                         break;
                     case R.id.Profile:
-                        selected=new ProfileFragment();
-                                               break;
+                        UserApi userApi = UserApi.getInstance();
+                        if(TextUtils.isEmpty(userApi.getUsername()) && TextUtils.isEmpty(userApi.getBio()))
+                        {
+                            //go to create profile fragment
+                        }
+                        else
+                        {
+                            selected=new ProfileFragment();
+                        }
+
+                        break;
                 }
                 getSupportFragmentManager().beginTransaction().replace(R.id.frameL,selected).commit();
                 return true;
             }
         });
 
-
-        firebaseAuth=FirebaseAuth.getInstance();
-        checkUserStatus();
     }
-
     private void checkUserStatus() {
         FirebaseUser currentUser=firebaseAuth.getCurrentUser();
         if(currentUser == null ){
             startActivity(new Intent(MainActivity.this,login_signup_getstarted.class));
+            finish();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 
     @Override
@@ -97,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.logoutbtn:
                 firebaseAuth.signOut();
                 startActivity(new Intent(MainActivity.this,login_signup_getstarted.class));
+                finish();
         }
         return super.onOptionsItemSelected(item);
     }
