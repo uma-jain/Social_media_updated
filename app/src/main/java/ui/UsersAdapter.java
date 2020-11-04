@@ -1,19 +1,16 @@
 package ui;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.myapplication.Personal_Chat_Activity;
 import com.example.myapplication.R;
 import com.squareup.picasso.Picasso;
 
@@ -58,13 +55,16 @@ public class UsersAdapter extends  RecyclerView.Adapter<UsersAdapter.MyHolder> {
         }
 
         //hanlde item click
-        holder.imageView_msg.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context,userModelList.get(i).getUid()+"got to chat act",Toast.LENGTH_LONG).show();
-                Intent intent=new Intent(context, Personal_Chat_Activity.class);
-              intent.putExtra("hisUid",userModelList.get(i).getUid());
-              context.startActivity(intent);
+                Toast.makeText(context,userModelList.get(i).getUid(),Toast.LENGTH_LONG).show();
+                //go to mainactivity2
+
+//              Intent intent = new Intent(context, MainActivity2.class);
+//              intent.putExtra("uid", userModelList.get(i).getUid());
+//              context.startActivity(intent);
+
             }
         });
 
@@ -79,8 +79,6 @@ public class UsersAdapter extends  RecyclerView.Adapter<UsersAdapter.MyHolder> {
     class  MyHolder extends RecyclerView.ViewHolder{
 
         CircleImageView imageView;
-        ImageView imageView_msg;
-
         TextView tv_username,tv_email;
 
         public MyHolder(@NonNull View itemView) {
@@ -88,7 +86,6 @@ public class UsersAdapter extends  RecyclerView.Adapter<UsersAdapter.MyHolder> {
 
             //initiate views
             imageView=itemView.findViewById(R.id.row_user_civ_profilepic);
-             imageView_msg=itemView.findViewById(R.id.row_user_goto_chatActivity);
             tv_email=itemView.findViewById(R.id.row_user_email);
             tv_username=itemView.findViewById(R.id.row_user_username);
         }

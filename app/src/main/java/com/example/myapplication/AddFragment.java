@@ -32,6 +32,9 @@ import com.google.firebase.storage.UploadTask;
 
 import org.w3c.dom.Text;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -139,7 +142,11 @@ public class AddFragment extends Fragment  implements View.OnClickListener {
                                     postModel.setPostTitle(title.getText().toString().trim());
                                     postModel.setPostDescription(description.getText().toString().trim());
                                     postModel.setPostId(UUID.randomUUID().toString());
-                                    postModel.setTimestamp(Timestamp.now());
+                                    DateFormat dform = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+                                    Date obj = new Date();
+                                    String currTime = dform.format(obj).toString();
+                                    //postModel.setTimestamp(Timestamp.now());
+                                    postModel.setPostTime(currTime);
                                     postModel.setLikes("0");
                                     postModel.setUserName(userApi.getUsername());
                                     postModel.setCommentCnt("0");

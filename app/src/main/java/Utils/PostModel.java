@@ -1,5 +1,8 @@
 package Utils;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.firebase.Timestamp;
 
 import java.io.Serializable;
@@ -8,12 +11,12 @@ import java.util.HashMap;
 public class PostModel implements Serializable {
     private String uid, imageUrl, postTitle, postDescription, postId, likes, userName, commentCnt, profileUrl;
     private HashMap<String, String> comments;
-    private Timestamp timestamp;
+    private String postTime;
 
     public PostModel() {
     }
 
-    public PostModel(String uid, String imageUrl, String postTitle, String postDescription, String postId, String likes, String userName, String commentCnt, String profileUrl, HashMap<String, String> comments, Timestamp timestamp) {
+    public PostModel(String uid, String imageUrl, String postTitle, String postDescription, String postId, String likes, String userName, String commentCnt, String profileUrl, HashMap<String, String> comments, String postTime) {
         this.uid = uid;
         this.imageUrl = imageUrl;
         this.postTitle = postTitle;
@@ -24,7 +27,7 @@ public class PostModel implements Serializable {
         this.commentCnt = commentCnt;
         this.profileUrl = profileUrl;
         this.comments = comments;
-        this.timestamp = timestamp;
+        this.postTime = postTime;
     }
 
     public String getProfileUrl() {
@@ -99,12 +102,12 @@ public class PostModel implements Serializable {
         this.postId = postId;
     }
 
-    public Timestamp getTimestamp() {
-        return timestamp;
+    public String getPostTime() {
+        return postTime;
     }
 
-    public void setTimestamp(Timestamp timestamp) {
-        this.timestamp = timestamp;
+    public void setPostTime(String postTime) {
+        this.postTime = postTime;
     }
 
     public String getLikes() {
@@ -114,4 +117,5 @@ public class PostModel implements Serializable {
     public void setLikes(String likes) {
         this.likes = likes;
     }
+
 }
