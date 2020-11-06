@@ -8,7 +8,7 @@ import java.util.HashMap;
 public class PostModel implements Serializable {
     private String uid, imageUrl, postTitle, postDescription, postId, likes, userName, commentCnt, profileUrl;
     private HashMap<String, String> comments;
-    private Timestamp timestamp;
+   // private Timestamp timestamp;
 
     public PostModel() {
     }
@@ -24,7 +24,7 @@ public class PostModel implements Serializable {
         this.commentCnt = commentCnt;
         this.profileUrl = profileUrl;
         this.comments = comments;
-        this.timestamp = timestamp;
+    //    this.timestamp = timestamp;
     }
 
     public String getProfileUrl() {
@@ -99,13 +99,13 @@ public class PostModel implements Serializable {
         this.postId = postId;
     }
 
-    public Timestamp getTimestamp() {
+   /* public Timestamp getTimestamp() {
         return timestamp;
     }
 
     public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
-    }
+    }*/
 
     public String getLikes() {
         return likes;

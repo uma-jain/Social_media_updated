@@ -139,15 +139,13 @@ public class AddFragment extends Fragment  implements View.OnClickListener {
                                     postModel.setPostTitle(title.getText().toString().trim());
                                     postModel.setPostDescription(description.getText().toString().trim());
                                     postModel.setPostId(UUID.randomUUID().toString());
-                                    postModel.setTimestamp(Timestamp.now());
+                                  //  postModel.setTimestamp(Timestamp.now());
                                     postModel.setLikes("0");
                                     postModel.setUserName(userApi.getUsername());
                                     postModel.setCommentCnt("0");
                                     postModel.setProfileUrl(userApi.getImage());
-
                                     HashMap<String, String> commentsHm = new HashMap<String , String >();
                                     postModel.setComments((HashMap<String, String>) commentsHm);
-
 
                                     //send it to collection post
                                     collectionReference.add(postModel)

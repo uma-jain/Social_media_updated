@@ -3,15 +3,14 @@ package Utils;
 import java.io.Serializable;
 
 public class UserModal implements Serializable {
-    String  uid,username,email,phone,search,image,cover,profession,follower,bio;
+    String  uid,username,email,phone,image,cover,profession,follower,bio;
     public UserModal() {
     }
-    public UserModal(String uid, String username, String email, String phone, String search, String image, String cover, String profession, String follower, String bio) {
+    public UserModal(String uid, String username, String email, String phone,  String image, String cover, String profession, String follower, String bio) {
         this.uid = uid;
         this.username = username;
         this.email = email;
         this.phone = phone;
-        this.search = search;
         this.image = image;
         this.cover = cover;
         this.profession = profession;
@@ -49,14 +48,6 @@ public class UserModal implements Serializable {
 
     public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    public String getSearch() {
-        return search;
-    }
-
-    public void setSearch(String search) {
-        this.search = search;
     }
 
     public String getImage() {
