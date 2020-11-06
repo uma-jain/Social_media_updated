@@ -147,7 +147,6 @@ public class SearchFragment extends Fragment implements UsersAdapter.OnUserClick
 
         //SaerchView
        // MenuItem menuItem=menu.findItem(R.id.search_btn);
-
 //        MenuItem search = menu.findItem(R.id.action_search);
 //        SearchView searchView = (SearchView) search.getActionView();
 

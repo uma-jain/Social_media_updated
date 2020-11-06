@@ -76,7 +76,7 @@ public class Personal_Chat_Activity extends AppCompatActivity {
 //       // menu.findItem(R.id.action_search).setVisible=(false);
 //        return super.onCreateOptionsMenu(menu);
 //    }
-//
+//z
 //
 //    @Override
 //    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
