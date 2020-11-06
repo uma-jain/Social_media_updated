@@ -19,8 +19,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
+import android.widget.Toast;
 
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -40,11 +40,11 @@ import java.util.List;
 import Utils.UserModal;
 import ui.UsersAdapter;
 
-public class SearchFragment extends Fragment {
+public class SearchFragment extends Fragment implements UsersAdapter.OnUserClickListener {
     //foriebaseAuth
     FirebaseAuth firebaseAuth;
     private FirebaseUser currentUser;
-    //firestore
+   //firestore
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference collectionReference = db.collection("Users");
 
@@ -58,7 +58,7 @@ public class SearchFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        currentUser=FirebaseAuth.getInstance().getCurrentUser();
+         currentUser=FirebaseAuth.getInstance().getCurrentUser();
         // Inflate the layout for this fragment
         View view=inflater.inflate(R.layout.fragment_search, container, false);
         recyclerView=view.findViewById(R.id.f_search_recycle_view);
@@ -80,11 +80,11 @@ public class SearchFragment extends Fragment {
                             for(QueryDocumentSnapshot documentSnapshots: task.getResult())
                             {
                                 UserModal user = documentSnapshots.toObject(UserModal.class);
-                                // Log.i("info",user.getEmail());
+                               // Log.i("info",user.getEmail());
                                 userModalList.add(user);
                             }
                             //adapter
-                            usersAdapter=new UsersAdapter(getActivity(),userModalList);
+                            usersAdapter=new UsersAdapter(getActivity(),userModalList, SearchFragment.this);
                             recyclerView.setAdapter(usersAdapter);
                         }
                     }
@@ -103,7 +103,8 @@ public class SearchFragment extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if(task.isSuccessful())
-                        {  userModalList = new ArrayList<UserModal>();
+                        {
+                            userModalList = new ArrayList<UserModal>();
                             for(QueryDocumentSnapshot documentSnapshots: task.getResult())
                             {
                                 UserModal user = documentSnapshots.toObject(UserModal.class);
@@ -115,8 +116,8 @@ public class SearchFragment extends Fragment {
                                 }
                             }
                             //adapter
-                            usersAdapter=new UsersAdapter(getActivity(),userModalList);
-                            //refrwsh adapter
+                            usersAdapter=new UsersAdapter(getActivity(),userModalList,SearchFragment.this);
+                            //refresh adapter
                             usersAdapter.notifyDataSetChanged();
                             recyclerView.setAdapter(usersAdapter);
                         }
@@ -137,25 +138,32 @@ public class SearchFragment extends Fragment {
 
 
     //inflate menu
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) { inflater.inflate(R.menu.menu_main,menu);
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_main,menu);
         super.onCreateOptionsMenu(menu,inflater);
+        MenuItem menuItem = menu.findItem(R.id.search_btn);
+        menuItem.setVisible(true);
         firebaseAuth=FirebaseAuth.getInstance();
 
         //SaerchView
-        MenuItem menuItem=menu.findItem(R.id.search_btn);
-       SearchView searchView= (SearchView) MenuItemCompat.getActionView(menuItem);
+       // MenuItem menuItem=menu.findItem(R.id.search_btn);
+
+//        MenuItem search = menu.findItem(R.id.action_search);
+//        SearchView searchView = (SearchView) search.getActionView();
+
+        SearchView searchView= (SearchView) menuItem.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 //called when user clicks on btn
                 //if search query not empty
                 if(!TextUtils.isEmpty(s.trim())){
-                    //s contains name of user
+                  //s contains name of user
                     Log.i("info","get users with name this");
                     searchUsers(s);
 
                 }else{
-                    getAllUsers();
+                  getAllUsers();
                 }
                 return false;
             }
@@ -182,11 +190,36 @@ public class SearchFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.logoutbtn:
-                firebaseAuth.signOut();
+             firebaseAuth.signOut();
                 startActivity(new Intent(getActivity(),login_signup_getstarted.class));
                 getActivity().finish();
         }
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onUserClick(int position) {
+
+        Toast.makeText(getContext(), userModalList.get(position).getUid(), Toast.LENGTH_SHORT).show();
+                //go to mainactivity2
+
+        Bundle bundle = new Bundle();
+        UserModal userModal = userModalList.get(position);
+        bundle.putSerializable("userModel",userModal);
+        Intent intent = new Intent(getContext(), Personal_Chat_Activity.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
+
+        //while getting this bundle in chatactivity
+//        Intent intent = this.getIntent();
+//        Bundle bundle = intent.getExtras();
+//
+//        List<Thumbnail> thumbs=
+//                (List<Thumbnail>)bundle.getSerializable("value");
+
+//
+//              Intent intent = new Intent(context, ChatActivity.class);
+//              intent.putExtra("uid", userModelList.get(i).getUid());
+//              context.startActivity(intent);
+    }
 }

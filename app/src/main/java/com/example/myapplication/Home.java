@@ -10,12 +10,15 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -87,8 +90,12 @@ public class Home extends Fragment implements PostRecyclerAdapter.OnPostClickLis
         super.onCreate(savedInstanceState);
     }
     //inflate menu
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) { inflater.inflate(R.menu.menu_main,menu);
-    super.onCreateOptionsMenu(menu,inflater);
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
+    {
+        inflater.inflate(R.menu.menu_main,menu);
+        MenuItem menuItem = menu.findItem(R.id.search_btn);
+        menuItem.setVisible(false);
+        super.onCreateOptionsMenu(menu,inflater);
     }
 
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -101,6 +108,7 @@ public class Home extends Fragment implements PostRecyclerAdapter.OnPostClickLis
         }
         return super.onOptionsItemSelected(item);
     }
+
 
     private void getDataFromFirestore() {
 
@@ -129,6 +137,7 @@ public class Home extends Fragment implements PostRecyclerAdapter.OnPostClickLis
                 });
 
     }
+
 
     @Override
     public void onPostClick(int position) {

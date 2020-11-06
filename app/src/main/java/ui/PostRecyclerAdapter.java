@@ -55,7 +55,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         holder.userName.setText(pm.getUserName());
         holder.title.setText(pm.getPostTitle());
         holder.description.setText(pm.getPostDescription());
-     //   holder.timestamp.setText(pm.getTimestamp().toString());
+        holder.timestamp.setText(pm.getPostTime());
 
         imageUrl = pm.getImageUrl();
 
