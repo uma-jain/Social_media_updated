@@ -112,10 +112,10 @@ public class login_signup_getstarted extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         currentUser = firebaseAuth.getCurrentUser();
-        if(currentUser == null ){
-            startActivity(new Intent(login_signup_getstarted.this,login_signup_getstarted.class));
-            finish();
-        }
+//        if(currentUser == null ){
+//            startActivity(new Intent(login_signup_getstarted.this,login_signup_getstarted.class));
+//            finish();
+//        }
         firebaseAuth.addAuthStateListener(authStateListener);
     }
 

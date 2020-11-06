@@ -24,6 +24,7 @@ import com.google.firebase.auth.FirebaseUser;
 import org.w3c.dom.Text;
 
 import Utils.UserApi;
+import fragments.CreateProfileFragment;
 
 public class MainActivity extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
@@ -73,9 +74,10 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.Profile:
                         UserApi userApi = UserApi.getInstance();
-                        if(TextUtils.isEmpty(userApi.getUsername()) && TextUtils.isEmpty(userApi.getBio()))
+                        if(TextUtils.isEmpty(userApi.getBio()))
                         {
                             //go to create profile fragment
+                            selected=new ProfileFragment();
                         }
                         else
                         {
