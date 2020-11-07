@@ -63,7 +63,13 @@ public class SearchFragment extends Fragment implements UsersAdapter.OnUserClick
     RecyclerView recyclerView;
     UsersAdapter usersAdapter;
     private List<UserModal> userModalList = new ArrayList<UserModal>();
+
     private boolean flag = true;
+
+    String concatUid="";
+
+    UserApi userApi = UserApi.getInstance();
+
     public SearchFragment() {
         // Required empty public constructor
     }
@@ -157,17 +163,11 @@ public class SearchFragment extends Fragment implements UsersAdapter.OnUserClick
         menuItem.setVisible(true);
         firebaseAuth=FirebaseAuth.getInstance();
 
-        //SaerchView
-       // MenuItem menuItem=menu.findItem(R.id.search_btn);
-//        MenuItem search = menu.findItem(R.id.action_search);
-//        SearchView searchView = (SearchView) search.getActionView();
-
         SearchView searchView= (SearchView) menuItem.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                //called when user clicks on btn
-                //if search query not empty
+
                 if(!TextUtils.isEmpty(s.trim())){
                   //s contains name of user
                     Log.i("info","get users with name this");
@@ -195,8 +195,6 @@ public class SearchFragment extends Fragment implements UsersAdapter.OnUserClick
 
     }
 
-
-
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
@@ -210,36 +208,98 @@ public class SearchFragment extends Fragment implements UsersAdapter.OnUserClick
 
     @Override
     public void onUserClick(int position) {
-
         Toast.makeText(getContext(), userModalList.get(position).getUid(), Toast.LENGTH_SHORT).show();
-        //go to mainactivity2
-        //add uid in userapi to messageuids arr of model present at position i
-        Log.d("here-1", "onUserClick: ");
-      updateHisFirestoreMessageArray(userModalList.get(position));
+        updateHisFirestoreMessageArray(userModalList.get(position));
     }
 
-    private void updateMyFirestoreMessageArray(final UserModal userModal) {
-        final ArrayList<String> messageuids;
-        //first update locally
-        UserApi userApi = UserApi.getInstance();
-        messageuids = userApi.getAl();
-        messageuids.add(userModal.getUid());
+    private void updateHisFirestoreMessageArray(final UserModal userModal) {
 
-        //now update in firestore
+
+        collectionReference.whereEqualTo("uid",userModal.getUid()).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        ArrayList<String> messageuids ;
+                        if (task.isSuccessful())
+                        {
+                            for(QueryDocumentSnapshot documentSnapshots: task.getResult())
+                            {
+                                UserApiModel userApiModel = documentSnapshots.toObject(UserApiModel.class);
+
+                                messageuids = userApiModel.getMessageuids();
+                                if (messageuids.contains(userApi.getUid()))
+                                {
+                                    Log.d("here3", "onUserClick: already chatted");
+                                    Toast.makeText(getContext(), "You have Already Chatted With This user Check the chat list fragment", Toast.LENGTH_SHORT).show();
+                                    sendUserModelAndDocRefId(userModal);
+                                }
+                                else
+                                {
+                                    Log.d("i am here", "onComplete: inside else");
+                                        Log.d("i am here", "onComplete: inside if");
+
+                                        //adding my uid to his array
+                                        messageuids.add(userApi.getUid());
+                                        for (String uids : messageuids)
+                                        {
+                                            Log.d("updated ids", "onComplete: "+uids);
+                                        }
+                                        //now again update the firestore
+                                        HashMap<String, Object> messUidArrUpdated = new HashMap<String, Object>();
+                                        messUidArrUpdated.put("messageuids", messageuids);
+                                        String did = documentSnapshots.getId();
+                                        final DocumentReference docRef = db.collection("Users").document(did);
+
+                                        docRef.update(messUidArrUpdated)
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Toast.makeText(getContext(), "his Array updated in firestore", Toast.LENGTH_SHORT).show();
+                                                        updateMyFirestoreMessageArray(userModal);
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Toast.makeText(getContext(), "Failed to update array", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+                                }
+                                break;
+                            }
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
+    }
+
+
+    private void updateMyFirestoreMessageArray(final UserModal userModal) {
+
         collectionReference.whereEqualTo("uid", userApi.getUid())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        final ArrayList<String> myuids;
                         if (task.isSuccessful())
                         {
                             for (QueryDocumentSnapshot documentSnapshot: task.getResult())
                             {
                                 final UserApiModel userApiModel = documentSnapshot.toObject(UserApiModel.class);
+                               myuids = userApiModel.getMessageuids();
+
+                                //add his uid
+                                myuids.add(userModal.getUid());
 
                                 //now update the firestore
                                 HashMap<String, Object> messUidArrUpdated = new HashMap<String, Object>();
-                                messUidArrUpdated.put("messageuids", messageuids);
+                                messUidArrUpdated.put("messageuids", myuids);
                                 String did = documentSnapshot.getId();
                                 final DocumentReference docRef = db.collection("Users").document(did);
 
@@ -248,6 +308,9 @@ public class SearchFragment extends Fragment implements UsersAdapter.OnUserClick
                                             @Override
                                             public void onSuccess(Void aVoid) {
                                                 Toast.makeText(getContext(), "my Array updated in firestore", Toast.LENGTH_SHORT).show();
+
+                                                //update locally
+                                                userApi.setAl(myuids);
 
                                                 //make the document of message for these two users and then open the next activity
                                                 makeMessDocAndStart(userModal);
@@ -276,39 +339,27 @@ public class SearchFragment extends Fragment implements UsersAdapter.OnUserClick
                 });
     }
 
-    String sortString(String inputString)
-    {
-        char tempArray[] = inputString.toCharArray();
-
-        // sort tempArray
-        Arrays.sort(tempArray);
-
-        // return new sorted string
-        return new String(tempArray);
-    }
 
     private void makeMessDocAndStart(final UserModal userModal)
     {
         final CollectionReference collectionReference2 = db.collection("messages");
-        //CollectionReference collectionReference3 = collectionReference2.document().collection("messagesText");
-        //put an array of the two users
-//        ArrayList<String> uids = new ArrayList<String>();
-//        uids.add(UserApi.getInstance().getUid());
-//        uids.add(userModal.getUid());
 
-        //AlgRTJNSbuYKSYAYYbtnRj5HQEs1 EVzE9fdo7DMpQc0T5SfzVh2lDoS2
-        //01225579AADDEEEHJKMNQQRRSSSSTTVVYYYYbbcdffghjllnoopstuzz
+        String u1 = userModal.getUid();
+        String u2 = userApi.getUid();
+        int res = stringCompare(u1, u2);
 
-        //LFWksF6p6xWHZRsDLLfRb9gLFsv2 AlgRTJNSbuYKSYAYYbtnRj5HQEs1
-        //125669AADEFFFHHJKLLLLNQRRRRSSTWWYYYYZbbbfggjklnpsssstuvx
-        String concatUid = UserApi.getInstance().getUid() +" "+ userModal.getUid();
-        concatUid = sortString(concatUid);
+        if(res<0)
+        {
+            concatUid = u1+"_"+u2;
+        }
+        else
+        {
+            concatUid = u2+"_"+u1;
+        }
 
         HashMap<String, Object> uidArrayHm = new HashMap<String, Object>();
         uidArrayHm.put("specialUid",concatUid);
 
-
-        final String finalConcatUid = concatUid;
         collectionReference2.add(uidArrayHm)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
@@ -328,16 +379,14 @@ public class SearchFragment extends Fragment implements UsersAdapter.OnUserClick
                                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                     @Override
                                     public void onSuccess(DocumentReference documentReference) {
-
-                                        //send document id and the userModel to chat activity
                                         Bundle bundle = new Bundle();
-                                        //UserModal userModal = userModalList.get(position);
                                         bundle.putSerializable("userModel",userModal);
                                         bundle.putString("documentId", docId);
                                         Log.d("here6", "onUserClick:");
                                         Intent intent = new Intent(getContext(), Personal_Chat_Activity.class);
                                         intent.putExtras(bundle);
                                         startActivity(intent);
+
                                     }
                                 })
                                 .addOnFailureListener(new OnFailureListener() {
@@ -354,98 +403,28 @@ public class SearchFragment extends Fragment implements UsersAdapter.OnUserClick
 
                     }
                 });
-
-        //make a message collection
     }
 
-    private boolean updateHisFirestoreMessageArray(final UserModal userModal) {
-        //get the current array of messageuids from firestore
-        final ArrayList<String> messageuids = new ArrayList<String>();
-
-        collectionReference.whereEqualTo("uid",userModal.getUid()).get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful())
-                        {
-                            for(QueryDocumentSnapshot documentSnapshots: task.getResult())
-                            {
-                                UserApiModel userApiModel = documentSnapshots.toObject(UserApiModel.class);
-                                if(userApiModel.getMessageuids().size() !=0 )
-                                {
-                                    for(String uid : userApiModel.getMessageuids())
-                                    {
-                                        if (!uid.equals(UserApi.getInstance().getUid()))
-                                        {
-                                            Log.d("here-2", "onUserClick: ");
-                                            Log.d("his message ids", "onComplete: "+uid);
-                                            messageuids.add(uid);
-                                        }
-                                        else
-                                        {
-                                            flag = false;
-                                            Log.d("here3", "onUserClick: already chatted");
-                                            Toast.makeText(getContext(), "You have Already Chatted With This user Check the chat list fragment", Toast.LENGTH_SHORT).show();
-                                            sendUserModelAndDocRefId(userModal);
-                                        }
-                                    }
-                                }
-
-                                else
-                                {
-                                    if (flag == true)
-                                    {
-                                        //adding my uid to his array
-                                        messageuids.add(UserApi.getInstance().getUid());
-                                        //now again update the firestore
-                                        HashMap<String, Object> messUidArrUpdated = new HashMap<String, Object>();
-                                        messUidArrUpdated.put("messageuids", messageuids);
-                                        String did = documentSnapshots.getId();
-                                        final DocumentReference docRef = db.collection("Users").document(did);
-
-                                        docRef.update(messUidArrUpdated)
-                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                    @Override
-                                                    public void onSuccess(Void aVoid) {
-                                                        Toast.makeText(getContext(), "his Array updated in firestore", Toast.LENGTH_SHORT).show();
-                                                    }
-                                                })
-                                                .addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception e) {
-                                                        Toast.makeText(getContext(), "Failed to update array", Toast.LENGTH_SHORT).show();
-                                                    }
-                                                });
-//                                        break;
-                                    }
-                                    updateMyFirestoreMessageArray(userModal);
-                                }
-                            }
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-
-                    }
-                });
-
-        return flag;
-        //update the array
-        //update firestore
-
-
-    }
 
     private void sendUserModelAndDocRefId(final UserModal userModal) {
-        //find the appropriate model and then send it to chat activity
 
-        final String specialUid = sortString(userModal.getUid() + " " + UserApi.getInstance().getUid());
+        String u1 = userModal.getUid();
+        String u2 = userApi.getUid();
+
+        int res= stringCompare(u1, u2);
+        if(res<0)
+        {
+            concatUid = u1+"_"+u2;
+        }
+        else
+        {
+            concatUid = u2+"_"+u1;
+        }
+        
 
         CollectionReference collectionReference5 = db.collection("messages");
         collectionReference5
-               .whereEqualTo("specialUid",specialUid)
+               .whereEqualTo("specialUid",concatUid)
                 .get()
         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -457,10 +436,7 @@ public class SearchFragment extends Fragment implements UsersAdapter.OnUserClick
                             String did = document.getId();
                             final DocumentReference docRef = db.collection("post").document(did);
 
-                            //send the document id and the userModel to next activity
-                            //send document id and the userModel to chat activity
                             Bundle bundle = new Bundle();
-                            //UserModal userModal = userModalList.get(position);
                             bundle.putSerializable("userModel",userModal);
                             bundle.putString("documentId", did);
                             Log.d("here6", "onUserClick:");
@@ -474,8 +450,34 @@ public class SearchFragment extends Fragment implements UsersAdapter.OnUserClick
         .addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-
+                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.d("exception message", "onFailure: " + e.getMessage());
             }
         });
+    }
+
+    public int stringCompare(String str1, String str2)
+    {
+
+        int l1 = str1.length();
+        int l2 = str2.length();
+        int lmin = Math.min(l1, l2);
+
+        for (int i = 0; i < lmin; i++) {
+            int str1_ch = (int)str1.charAt(i);
+            int str2_ch = (int)str2.charAt(i);
+
+            if (str1_ch != str2_ch) {
+                return str1_ch - str2_ch;
+            }
+        }
+
+        if (l1 != l2) {
+            return l1 - l2;
+        }
+
+        else {
+            return 0;
+        }
     }
 }
