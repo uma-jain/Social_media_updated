@@ -63,9 +63,7 @@ public class SearchFragment extends Fragment implements UsersAdapter.OnUserClick
     RecyclerView recyclerView;
     UsersAdapter usersAdapter;
     private List<UserModal> userModalList = new ArrayList<UserModal>();
-
     private boolean flag = true;
-
     public SearchFragment() {
         // Required empty public constructor
     }
@@ -214,48 +212,10 @@ public class SearchFragment extends Fragment implements UsersAdapter.OnUserClick
     public void onUserClick(int position) {
 
         Toast.makeText(getContext(), userModalList.get(position).getUid(), Toast.LENGTH_SHORT).show();
-                //go to mainactivity2
-
-
+        //go to mainactivity2
         //add uid in userapi to messageuids arr of model present at position i
         Log.d("here-1", "onUserClick: ");
-        boolean res = updateHisFirestoreMessageArray(userModalList.get(position));
-        Log.d("here-2", "onUserClick: ");
-
-        if (res)
-        {
-            Log.d("here4", "onUserClick: calling my update");
-//            updateMyFirestoreMessageArray(userModalList.get(position));
-            Log.d("here5", "onUserClick: called my update");
-
-//            Bundle bundle = new Bundle();
-//            UserModal userModal = userModalList.get(position);
-//            bundle.putSerializable("userModel",userModal);
-//            Log.d("here6", "onUserClick:");
-//            Intent intent = new Intent(getContext(), Personal_Chat_Activity.class);
-//            intent.putExtras(bundle);
-//            startActivity(intent);
-            Log.d("here7", "onUserClick:");
-
-        }
-        else
-        {
-            Toast.makeText(getContext(), "You have Already Chatted With This user Check the chat list fragment", Toast.LENGTH_SHORT).show();
-        }
-
-
-
-        //while getting this bundle in chatactivity
-//        Intent intent = this.getIntent();
-//        Bundle bundle = intent.getExtras();
-//
-//        List<Thumbnail> thumbs=
-//                (List<Thumbnail>)bundle.getSerializable("value");
-
-//
-//              Intent intent = new Intent(context, ChatActivity.class);
-//              intent.putExtra("uid", userModelList.get(i).getUid());
-//              context.startActivity(intent);
+      updateHisFirestoreMessageArray(userModalList.get(position));
     }
 
     private void updateMyFirestoreMessageArray(final UserModal userModal) {
@@ -314,8 +274,6 @@ public class SearchFragment extends Fragment implements UsersAdapter.OnUserClick
 
                     }
                 });
-
-
     }
 
     String sortString(String inputString)
@@ -380,7 +338,6 @@ public class SearchFragment extends Fragment implements UsersAdapter.OnUserClick
                                         Intent intent = new Intent(getContext(), Personal_Chat_Activity.class);
                                         intent.putExtras(bundle);
                                         startActivity(intent);
-
                                     }
                                 })
                                 .addOnFailureListener(new OnFailureListener() {
@@ -399,8 +356,6 @@ public class SearchFragment extends Fragment implements UsersAdapter.OnUserClick
                 });
 
         //make a message collection
-
-
     }
 
     private boolean updateHisFirestoreMessageArray(final UserModal userModal) {
@@ -423,19 +378,15 @@ public class SearchFragment extends Fragment implements UsersAdapter.OnUserClick
                                         if (!uid.equals(UserApi.getInstance().getUid()))
                                         {
                                             Log.d("here-2", "onUserClick: ");
-
                                             Log.d("his message ids", "onComplete: "+uid);
                                             messageuids.add(uid);
-
                                         }
                                         else
                                         {
                                             flag = false;
                                             Log.d("here3", "onUserClick: already chatted");
                                             Toast.makeText(getContext(), "You have Already Chatted With This user Check the chat list fragment", Toast.LENGTH_SHORT).show();
-
                                             sendUserModelAndDocRefId(userModal);
-
                                         }
                                     }
                                 }
@@ -446,7 +397,6 @@ public class SearchFragment extends Fragment implements UsersAdapter.OnUserClick
                                     {
                                         //adding my uid to his array
                                         messageuids.add(UserApi.getInstance().getUid());
-
                                         //now again update the firestore
                                         HashMap<String, Object> messUidArrUpdated = new HashMap<String, Object>();
                                         messUidArrUpdated.put("messageuids", messageuids);
@@ -517,7 +467,6 @@ public class SearchFragment extends Fragment implements UsersAdapter.OnUserClick
                             Intent intent = new Intent(getContext(), Personal_Chat_Activity.class);
                             intent.putExtras(bundle);
                             startActivity(intent);
-
                         }
                 }
             }

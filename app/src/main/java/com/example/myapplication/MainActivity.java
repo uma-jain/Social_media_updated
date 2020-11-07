@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
                         if(TextUtils.isEmpty(userApi.getBio()))
                         {
                             //go to create profile fragment
-                            selected=new ProfileFragment();
+                            selected=new CreateProfileFragment();
                         }
                         else
                         {
