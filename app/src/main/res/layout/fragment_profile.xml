@@ -82,12 +82,17 @@
         android:layout_height="4dp"
         android:id="@+id/v1"
         android:background="@drawable/shadow"/>
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/l1"
 
-        ></ScrollView>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/fp_display_post_images"
+        android:layout_width="match_parent"
+        android:layout_below="@id/v1"
+        android:layout_margin="5dp"
+        android:layout_height="match_parent">
+
+
+    </androidx.recyclerview.widget.RecyclerView>
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fp_editprofile"
@@ -107,5 +112,7 @@
         android:layout_marginBottom="15dp"
         android:contentDescription="submit"
         android:src="@drawable/ic_baseline_edit_24" />
+
+
 
 </RelativeLayout>

@@ -111,7 +111,6 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
             go_to_comment_post_row = itemView.findViewById(R.id.go_to_comment_post_row);
 
             this.onPostClickListener = onPostClickListener;
-
             itemView.setOnClickListener(this);
         }
 
