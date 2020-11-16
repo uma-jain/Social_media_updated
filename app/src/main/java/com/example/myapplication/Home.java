@@ -18,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -54,6 +55,7 @@ public class Home extends Fragment implements PostRecyclerAdapter.OnPostClickLis
     private PostRecyclerAdapter postRecyclerAdapter;
 
     private RecyclerView recyclerView;
+    private ProgressBar progressBar;
 
     UserApi userApi = UserApi.getInstance();
 
@@ -70,7 +72,7 @@ public class Home extends Fragment implements PostRecyclerAdapter.OnPostClickLis
         View view =  inflater.inflate(R.layout.fragment_home, container, false);
 
         recyclerView = view.findViewById(R.id.recycler_view);
-
+        progressBar = view.findViewById(R.id.home_progress_bar);
         UserApi userApi = UserApi.getInstance();
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -111,7 +113,7 @@ public class Home extends Fragment implements PostRecyclerAdapter.OnPostClickLis
 
 
     private void getDataFromFirestore() {
-
+        progressBar.setVisibility(View.VISIBLE);
         collectionReference.get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -132,10 +134,10 @@ public class Home extends Fragment implements PostRecyclerAdapter.OnPostClickLis
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-
+                        progressBar.setVisibility(View.INVISIBLE);
                     }
                 });
-
+            progressBar.setVisibility(View.INVISIBLE);
     }
 
 
