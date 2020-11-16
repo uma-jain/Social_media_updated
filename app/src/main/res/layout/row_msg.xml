@@ -6,32 +6,60 @@
     android:layout_marginStart="8dp"
     android:layout_marginEnd="8dp"
     xmlns:tools="http://schemas.android.com/tools">
-
-    <TextView
-        android:id="@+id/textview_chat_sent"
+    <LinearLayout
+        android:id="@+id/linear_layout_received"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:paddingEnd="8dp"
-        android:paddingStart="24dp"
-        tools:text="This is a sent message keep the text going so we can see"
-        android:background="@drawable/shape_bubble_sent"
-        android:textColor="@android:color/white"
-        android:maxWidth="256dp" />
+        android:gravity="end"
+        android:orientation="vertical"
+        android:background="@drawable/shape_bubble_sent">
 
-    <TextView
-        android:id="@+id/textview_chat_received"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:paddingStart="8dp"
-        android:paddingEnd="24dp"
+        <TextView
+            android:id="@+id/textview_chat_recieved"
+            android:layout_width="wrap_content"
+            android:padding="8dp"
+            android:gravity="start"
+            android:layout_gravity="end"
+            android:layout_height="wrap_content"
+            tools:text="This the text going so we can see"
+            android:textColor="@android:color/white" />
+
+
+        <TextView
+            android:id="@+id/timestamp_text_view_receieved"
+            tools:text="12:10 am"
+            android:gravity="center_vertical|start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"  />
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/linear_layout_sent"
+        android:padding="8dp"
+        android:gravity="end"
         android:layout_gravity="end"
-        tools:text="This is a received message keep the text going so we can see"
+        android:orientation="vertical"
         android:background="@drawable/shape_bubble_received"
-        android:textColor="@android:color/black"
-        android:maxWidth="256dp" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+android:layout_gravity="start"
+            android:id="@+id/message_text_view_sent"
+            tools:text="My nlaces is not the atomic career of the doer."
+            android:gravity="center_vertical|start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+        <TextView
+            android:id="@+id/timestamp_text_sent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:gravity="center_vertical|start"
+            tools:text="12:10 am" />
+
+    </LinearLayout>
 
 </FrameLayout>

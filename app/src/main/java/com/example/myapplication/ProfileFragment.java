@@ -60,7 +60,7 @@ public class ProfileFragment extends Fragment {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference collectionReference = db.collection("post");
     RecyclerView recyclerView;
-
+UserApi userApi=UserApi.getInstance();
     private List<PostModel> personImages = new ArrayList<PostModel>();
 
 
@@ -141,7 +141,9 @@ public class ProfileFragment extends Fragment {
                             for(QueryDocumentSnapshot documentSnapshots: task.getResult())
                             {
                                 PostModel p = documentSnapshots.toObject(PostModel.class);
-                                personImages.add(p);
+                                if(userApi.getUid().equals(p.getUid())){
+                                    personImages.add(p);
+                                }
                             }
 
                             // get the reference of RecyclerView
