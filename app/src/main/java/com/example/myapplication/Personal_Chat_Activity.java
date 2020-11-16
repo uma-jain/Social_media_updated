@@ -1,7 +1,9 @@
 package com.example.myapplication;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
@@ -9,6 +11,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,21 +30,28 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import Utils.MessageModel;
 import Utils.UserApi;
 import Utils.UserModal;
+import ui.MessagesAdapter;
+import ui.UsersAdapter;
 
 public class Personal_Chat_Activity extends AppCompatActivity {
       Toolbar toolbar;
-//    RecyclerView recyclerView;
       TextView hisStatus, hisName;
       ImageView profilePic;
       EditText chatMessage;
@@ -51,6 +61,9 @@ public class Personal_Chat_Activity extends AppCompatActivity {
       private FirebaseFirestore db = FirebaseFirestore.getInstance();
       private CollectionReference collectionReference;
 
+    private List<MessageModel> messagesList = new ArrayList<MessageModel>();
+      MessagesAdapter messagesAdapter;
+       RecyclerView recyclerView;
 
     @SuppressLint("WrongViewCast")
     @Override
@@ -69,13 +82,22 @@ public class Personal_Chat_Activity extends AppCompatActivity {
         Toast.makeText(this, documentId, Toast.LENGTH_SHORT).show();
         collectionReference = db.collection("messages").document(documentId).collection("messagesInfo");
 
-//        recyclerView = findViewById(R.id.recylerview_message_list);
+         recyclerView = findViewById(R.id.recylerview_message_list);
           profilePic = findViewById(R.id.civ_profilepic);
           hisName = findViewById(R.id.tv_hisname);
           hisStatus = findViewById(R.id.tv_his_status);
           chatMessage = findViewById(R.id.edittext_chatbox);
           sendButton = findViewById(R.id.button_chatbox_send);
+    //initiate recycle view
+                recyclerView.setHasFixedSize(true);
+               recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+          initmessageList();
+          //set adapter
+        //sort messageList
+        //adapter
+        messagesAdapter=new MessagesAdapter(getApplicationContext(),messagesList);
+        recyclerView.setAdapter(messagesAdapter);
           sendButton.setOnClickListener(new View.OnClickListener() {
               @Override
               public void onClick(View v) {
@@ -130,6 +152,27 @@ public class Personal_Chat_Activity extends AppCompatActivity {
                       .fit()
                       .into(profilePic);
           }
+    }
+
+    private void initmessageList() {
+        //get data set adapter;
+        collectionReference.orderBy("messageTime").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                messagesList.clear();
+
+                for (QueryDocumentSnapshot doc : value) {
+                    MessageModel msg = doc.toObject(MessageModel.class);
+                    // Log.i("info",user.getEmail());
+                    messagesList.add(msg);
+                }
+                Log.i("info","data set changed");
+                messagesAdapter.notifyDataSetChanged();
+            }
+
+        });
+
+
     }
 
 

@@ -3,25 +3,16 @@ package com.example.myapplication;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.Bundle;
-import android.text.Layout;
 import android.text.TextUtils;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
-import org.w3c.dom.Text;
 
 import Utils.UserApi;
 import fragments.CreateProfileFragment;
@@ -68,8 +59,8 @@ public class MainActivity extends AppCompatActivity {
                         selected=new AddFragment();
 
                         break;
-                    case R.id.Notification:
-                        selected=new NotificationFragment();
+                    case R.id.messages:
+                        selected=new MessagesFragment();
 
                         break;
                     case R.id.Profile:
@@ -77,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
                         if(TextUtils.isEmpty(userApi.getBio()))
                         {
                             //go to create profile fragment
-                            selected=new ProfileFragment();
+                            selected=new CreateProfileFragment();
                         }
                         else
                         {

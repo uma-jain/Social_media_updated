@@ -98,8 +98,11 @@ public class SearchFragment extends Fragment implements UsersAdapter.OnUserClick
                             for(QueryDocumentSnapshot documentSnapshots: task.getResult())
                             {
                                 UserModal user = documentSnapshots.toObject(UserModal.class);
-                               // Log.i("info",user.getEmail());
-                                userModalList.add(user);
+                               //if not current user then add
+                                if(!userApi.getUid().equals(user.getUid())){
+                                    userModalList.add(user);
+                                }
+
                             }
                             //adapter
                             usersAdapter=new UsersAdapter(getActivity(),userModalList, SearchFragment.this);
