@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -24,7 +25,7 @@ public class login_signup_getstarted extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
     private FirebaseUser currentUser;
-
+    private ProgressDialog progressDialog;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference collectionReference = db.collection("Users");
 
@@ -35,6 +36,9 @@ public class login_signup_getstarted extends AppCompatActivity {
         setContentView(R.layout.activity_login_signup_getstarted);
         firebaseAuth=FirebaseAuth.getInstance();
         currentUser = firebaseAuth.getCurrentUser();
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Checking current status.. Please wait");
+        progressDialog.show();
 
 
         //if user authenticated and profile is created go to main activity
@@ -70,7 +74,7 @@ public class login_signup_getstarted extends AppCompatActivity {
                                             userApi.setProfession(snapshot.getString("profession"));
                                             userApi.setUsername(snapshot.getString("username"));
                                             userApi.setUid(snapshot.getString("uid"));
-
+                                            progressDialog.dismiss();
                                             startActivity(new Intent(login_signup_getstarted.this,MainActivity.class));
                                             finish();
                                         }
@@ -82,6 +86,7 @@ public class login_signup_getstarted extends AppCompatActivity {
                 else
                 {
                     //if he is new user
+                    progressDialog.dismiss();
                 }
 
             }
