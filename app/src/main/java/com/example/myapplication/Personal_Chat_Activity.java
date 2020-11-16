@@ -171,31 +171,7 @@ public class Personal_Chat_Activity extends AppCompatActivity {
             }
 
         });
-/*
-*   collectionReference.get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful())
-                        {   messagesList = new ArrayList<MessageModel>();
-                            for(QueryDocumentSnapshot documentSnapshots: task.getResult())
-                            {
-                                MessageModel msg = documentSnapshots.toObject(MessageModel.class);
-                                // Log.i("info",user.getEmail());
-                                messagesList.add(msg);
 
-                            }
-
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-
-                    }
-        });
-* */
 
     }
 
