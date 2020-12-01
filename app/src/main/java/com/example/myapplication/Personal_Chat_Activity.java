@@ -186,6 +186,9 @@ public class Personal_Chat_Activity extends AppCompatActivity {
 
     private void initmessageList2() {
         //get data set adapter;
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Refreshing...");
+        progressDialog.show();
         collectionReference.get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
@@ -212,6 +215,8 @@ public class Personal_Chat_Activity extends AppCompatActivity {
 
                         Log.i("info","data set changed");
                         messagesAdapter.notifyDataSetChanged();
+
+                        progressDialog.dismiss();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
