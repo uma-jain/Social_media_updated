@@ -2,6 +2,7 @@ package fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -11,6 +12,8 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -33,8 +36,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +52,6 @@ import Utils.CommentModel;
 import Utils.PostModel;
 import Utils.UserApi;
 import ui.CommentRecyclerAdapter;
-import ui.PostRecyclerAdapter;
 
 public class CommentsFragment extends Fragment {
 
@@ -60,6 +67,7 @@ public class CommentsFragment extends Fragment {
 
 
 
+    private ProgressDialog progressDialog;
 
 
 
@@ -67,7 +75,10 @@ public class CommentsFragment extends Fragment {
     private List<CommentModel> commentModelList = new ArrayList<CommentModel>();
     private RecyclerView recyclerView;
     private Button commentButton;
+    private ImageView commentPostUserImg, commentPostImg;
+    private TextView commentPostUserName, commentPostTitle, commentPostDescription, commentPostTimestamp;
 
+    String docId = "";
 
     public CommentsFragment()
     {}
@@ -84,6 +95,13 @@ public class CommentsFragment extends Fragment {
         assert view != null;
         recyclerView = view.findViewById(R.id.recycler_view_comment);
         commentButton = view.findViewById(R.id.comment_button);
+        commentPostUserImg = view.findViewById(R.id.comment_user_image_post_row);
+        commentPostImg = view.findViewById(R.id.comment_image_post_row);
+        commentPostUserName = view.findViewById(R.id.comment_username_post_row);
+        commentPostTitle = view.findViewById(R.id.comment_title_post_row);
+        commentPostDescription = view.findViewById(R.id.comment_description_post_row);
+        commentPostTimestamp = view.findViewById(R.id.comment_timestamp_post_row);
+
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -92,28 +110,30 @@ public class CommentsFragment extends Fragment {
         final  PostModel pm= (PostModel) getArguments().getSerializable("postmodel");
 
         assert pm != null;
-        Toast.makeText(getContext(), pm.getPostTitle(), Toast.LENGTH_SHORT).show();
+       // Toast.makeText(getContext(), pm.getPostTitle(), Toast.LENGTH_SHORT).show();
 
-        final HashMap<String, String> commentsHm = pm.getComments();
+        //setting up the post details
+        String imageUrl = pm.getProfileUrl();
+        Picasso.get()
+                .load(imageUrl)
+                .placeholder(R.drawable.image_one)
+                .fit()
+                .into(commentPostUserImg);
 
-        for(Map.Entry<String, String> entry: commentsHm.entrySet())
-        {
-            CommentModel cm = new CommentModel();
-            cm.setUserName(entry.getKey());
-            cm.setComment(entry.getValue());
-            commentModelList.add(cm);
-//            System.out.println("Size = "+ entry.getKey()+"  qty = "+entry.getValue());
-        }
+        String postImgUrl = pm.getImageUrl();
+        Picasso.get()
+                .load(postImgUrl)
+                .placeholder(R.drawable.image_one)
+                .fit()
+                .into(commentPostImg);
 
-        for(int i=0; i<commentModelList.size(); i++)
-        {
-            Log.d("comment username", "onCreateView: "+commentModelList.get(i).getUserName());
-        }
+        commentPostUserName.setText(pm.getUserName());
+        commentPostTitle.setText(pm.getPostTitle());
+        commentPostDescription.setText(pm.getPostDescription());
+        commentPostTimestamp.setText(pm.getPostTime());
 
-        //send to recycler view
-        CommentRecyclerAdapter commentRecyclerAdapter = new CommentRecyclerAdapter(commentModelList);
-        recyclerView.setAdapter(commentRecyclerAdapter);
 
+        refereshCommentsRecyclerView(pm);
 
         commentButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,76 +165,127 @@ public class CommentsFragment extends Fragment {
                         dialog.dismiss();
                         String comText = "";
                         //get updated text from edit text
-                        if (!TextUtils.isEmpty(commentText.getText().toString().trim()))
-                        {
+                        if (!TextUtils.isEmpty(commentText.getText().toString().trim())) {
                             comText = commentText.getText().toString().trim();
-                            updateHashMapFirestore(comText, userApi.getUsername());
-                        }
-                        else {
+
+                            String username = "";
+                            if (TextUtils.isEmpty(userApi.getUsername())) {
+                                username = "username";
+                            } else {
+                                username = userApi.getUsername();
+                            }
+
+                            //updateHashMapFirestore( username, comText);
+                            updateCommentsFirestore(username, comText, pm);
+
+                        } else {
                             Snackbar.make(Objects.requireNonNull(getView()), "Please Type some text", 1000);
                             Toast.makeText(getContext(), "Please Type some text", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
             }
-
-            private void updateHashMapFirestore(String comText, String username) {
-                if(username.equals(""))
-                {
-                    username = "username";
-                }
-                commentsHm.put(username, comText);
-
-                final HashMap<String, Object> commentsUpdated = new HashMap<String, Object>();
-                commentsUpdated.put("comments", commentsHm);
-
-
-                    CommentModel cm = new CommentModel(username, comText);
-                    commentModelList.add(cm);
-                CommentRecyclerAdapter commentRecyclerAdapter = new CommentRecyclerAdapter(commentModelList);
-                recyclerView.setAdapter(commentRecyclerAdapter);
-
-//                //now upadate hashmap in firestore
-//                final Map<String, Object> commentsHmObj = new HashMap<String, Object>();
-//
-//                commentsHmObj.put("comments",commentsUpdated);
-//
-                collectionReference.whereEqualTo("postId",pm.getPostId()).get()
-                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful())
-                                {
-                                    for (QueryDocumentSnapshot document: task.getResult())
-                                    {
-                                        String did = document.getId();
-                                        Log.d("doc id", "onComplete: "+did);
-                                        Log.d("post id", "onComplete: "+pm.getPostId());
-                                        final DocumentReference docRef = db.collection("post").document(did);
-                                        
-                                        docRef.update(commentsUpdated)
-                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                    @Override
-                                                    public void onSuccess(Void aVoid) {
-                                                        Toast.makeText(getContext(), "Comments updated in firestore", Toast.LENGTH_SHORT).show();
-                                                    }
-                                                })
-                                                .addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception e) {
-                                                        Toast.makeText(getContext(), "Failed to add comment", Toast.LENGTH_SHORT).show();
-                                                    }
-                                                });
-                                        break;
-                                    }
-                                }
-                            }
-                        });
-                //then refresh the list
-            }
         });
 
 
+
         return view;
+    }
+
+    private void updateCommentsFirestore(final String username, final String comText, final PostModel pm)
+    {
+
+        collectionReference.whereEqualTo("postId", pm.getPostId())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful())
+                        {
+                            for (QueryDocumentSnapshot document : task.getResult())
+                            {
+                                String did = document.getId();
+                                CollectionReference collectionReference1 = db.collection("post").document(did).collection("comments");
+                                CommentModel c = new CommentModel();
+                                c.setUserName(username);
+                                c.setComment(comText);
+                                DateFormat dform = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+                                Date obj = new Date();
+                                String currTime = dform.format(obj).toString();
+                                c.setCommentTimeStamp(currTime);
+                                collectionReference1.add(c)
+                                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                            @Override
+                                            public void onSuccess(DocumentReference documentReference) {
+                                                Toast.makeText(getContext(), "comment added successfully", Toast.LENGTH_SHORT).show();
+                                                refereshCommentsRecyclerView(pm);
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Toast.makeText(getContext(), "failed to add", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+
+                            }
+                        }
+                    }
+                });
+    }
+
+    private void refereshCommentsRecyclerView(PostModel pm) {
+        progressDialog = new ProgressDialog(getContext());
+        progressDialog.setMessage("Refreshing Comments...");
+        progressDialog.show();
+
+        commentModelList.clear();
+        collectionReference.whereEqualTo("postId", pm.getPostId())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful())
+                        {
+                            for (QueryDocumentSnapshot document : task.getResult())
+                            {
+                                String did = document.getId();
+                                CollectionReference collectionReference2 = db.collection("post").document(did).collection("comments");
+                                collectionReference2
+                                        .get()
+                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                if (task.isSuccessful())
+                                                {
+                                                    for(QueryDocumentSnapshot documentSnapshots: task.getResult())
+                                                    {
+                                                        CommentModel cm = documentSnapshots.toObject(CommentModel.class);
+                                                        commentModelList.add(cm);
+
+
+                                                        CommentRecyclerAdapter commentRecyclerAdapter = new CommentRecyclerAdapter(commentModelList);
+                                                        recyclerView.setAdapter(commentRecyclerAdapter);
+
+                                                    }
+                                                    if (commentModelList.isEmpty())
+                                                    {
+                                                        Toast.makeText(getContext(), "Be the first one to comment", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                    progressDialog.dismiss();
+                                                }
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Toast.makeText(getContext(), "Be the first To comment", Toast.LENGTH_LONG).show();
+                                                progressDialog.dismiss();
+                                            }
+                                        });
+                            }
+                        }
+                    }
+                });
     }
 }

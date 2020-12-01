@@ -9,9 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
-
-import org.w3c.dom.Text;
-
 import java.util.List;
 
 import Utils.CommentModel;
@@ -38,6 +35,7 @@ public class CommentRecyclerAdapter extends RecyclerView.Adapter<CommentRecycler
         CommentModel cm = commentModelList.get(position);
         holder.userNameComment.setText(cm.getUserName());
         holder.commentTextC.setText(cm.getComment());
+        holder.commentTime.setText(cm.getCommentTimeStamp());
     }
 
     @Override
@@ -49,11 +47,13 @@ public class CommentRecyclerAdapter extends RecyclerView.Adapter<CommentRecycler
     {
         public TextView userNameComment;
         public TextView commentTextC;
+        public TextView commentTime;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
            userNameComment = itemView.findViewById(R.id.comment_user_name);
             commentTextC = itemView.findViewById(R.id.comment_text);
+            commentTime = itemView.findViewById(R.id.comment_time);
         }
     }
 }

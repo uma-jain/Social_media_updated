@@ -75,7 +75,10 @@ public class login_signup_getstarted extends AppCompatActivity {
                                             userApi.setProfession(snapshot.getString("profession"));
                                             userApi.setUsername(snapshot.getString("username"));
                                             userApi.setUid(snapshot.getString("uid"));
+
                                            userApi.setAl((ArrayList<String>) snapshot.get("messageuids"));
+
+                                            userApi.setAl((ArrayList<String>) snapshot.get("messageuids"));
 
                                             progressDialog.dismiss();
                                             startActivity(new Intent(login_signup_getstarted.this,MainActivity.class));
