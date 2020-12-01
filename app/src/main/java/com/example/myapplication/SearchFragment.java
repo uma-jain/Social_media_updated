@@ -82,7 +82,6 @@ public class SearchFragment extends Fragment implements UsersAdapter.OnUserClick
         recyclerView=view.findViewById(R.id.f_search_recycle_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
         //getAll users
         getAllUsers();
         return view;
@@ -102,7 +101,6 @@ public class SearchFragment extends Fragment implements UsersAdapter.OnUserClick
                                 if(!userApi.getUid().equals(user.getUid())){
                                     userModalList.add(user);
                                 }
-
                             }
                             //adapter
                             usersAdapter=new UsersAdapter(getActivity(),userModalList, SearchFragment.this);
@@ -131,7 +129,7 @@ public class SearchFragment extends Fragment implements UsersAdapter.OnUserClick
                                 UserModal user = documentSnapshots.toObject(UserModal.class);
                                 // Log.i("info",user.getEmail());
 
-                                if(user.getUsername().toLowerCase().contains(query.toLowerCase())){
+                                if(user.getUsername().toLowerCase().contains(query.toLowerCase()) ){
                                     Log.i("info",user.getUsername());
                                     userModalList.add(user);
                                 }
@@ -195,7 +193,6 @@ public class SearchFragment extends Fragment implements UsersAdapter.OnUserClick
                 return false;
             }
         });
-
     }
 
     @Override
@@ -314,7 +311,6 @@ public class SearchFragment extends Fragment implements UsersAdapter.OnUserClick
 
                                                 //update locally
                                                 userApi.setAl(myuids);
-
                                                 //make the document of message for these two users and then open the next activity
                                                 makeMessDocAndStart(userModal);
 
@@ -382,6 +378,7 @@ public class SearchFragment extends Fragment implements UsersAdapter.OnUserClick
                                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                     @Override
                                     public void onSuccess(DocumentReference documentReference) {
+
                                         Bundle bundle = new Bundle();
                                         bundle.putSerializable("userModel",userModal);
                                         bundle.putString("documentId", docId);
@@ -446,6 +443,7 @@ public class SearchFragment extends Fragment implements UsersAdapter.OnUserClick
                             Intent intent = new Intent(getContext(), Personal_Chat_Activity.class);
                             intent.putExtras(bundle);
                             startActivity(intent);
+
                         }
                 }
             }

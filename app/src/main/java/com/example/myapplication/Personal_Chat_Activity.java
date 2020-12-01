@@ -83,6 +83,8 @@ public class Personal_Chat_Activity extends AppCompatActivity {
         Bundle bundle = intent.getExtras();
 
         UserModal userModal = (UserModal) bundle.getSerializable("userModel");
+        Log.i("error site",userModal.getUsername());
+
         String documentId = bundle.getString("documentId");
         Toast.makeText(this, documentId, Toast.LENGTH_SHORT).show();
         collectionReference = db.collection("messages").document(documentId).collection("messagesInfo");
@@ -169,7 +171,6 @@ public class Personal_Chat_Activity extends AppCompatActivity {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 messagesList.clear();
-
                 for (QueryDocumentSnapshot doc : value) {
                     MessageModel msg = doc.toObject(MessageModel.class);
                     // Log.i("info",user.getEmail());

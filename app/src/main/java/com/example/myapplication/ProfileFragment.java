@@ -126,7 +126,6 @@ UserApi userApi=UserApi.getInstance();
         });
                     getDataFromFirestore();
                     //recycler view
-
         return view;
 
     }

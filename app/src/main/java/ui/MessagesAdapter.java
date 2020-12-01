@@ -48,18 +48,17 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MyHold
         String senderid= messageModelList.get(position).getSendBy();
         String msg=messageModelList.get(position).getMessageText();
         String time=messageModelList.get(position).getMessageTime();
-        Log.i("msg",msg);
-        Log.i("msg",senderid);
+     //   Log.i("msg",msg);
+     //   Log.i("msg",senderid);
         if(senderid.equals(userApi.getUid())){
             //sender is current user
-            Log.i("msg","i am sender");
+            Log.i("msg","i am sender"+msg);
             holder.chat_sent.setText(msg);
             holder.time_sent.setText(time.substring(9,17));
             holder.l_receieved.setVisibility(View.GONE);
         }
         else{
-
-            Log.i("msg","i am not sender");
+            Log.i("msg","i am not sender"+msg);
             holder.chat_received.setText(msg);
             holder.time_received.setText(time.substring(9,17));
             holder.l_sent.setVisibility(View.GONE);
@@ -83,7 +82,6 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MyHold
         TextView chat_received,time_received;
 
         ImageView rowGoToChatActivity;
-        UsersAdapter.OnUserClickListener onUserClickListener;
 
         public MyHolder(@NonNull View itemView) {
             super(itemView);

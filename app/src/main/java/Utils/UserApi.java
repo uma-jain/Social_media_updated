@@ -26,6 +26,7 @@ public class UserApi extends Application {
         return al;
     }
 
+
     public void setAl(ArrayList<String> al) {
         this.al = al;
     }
@@ -101,5 +102,6 @@ public class UserApi extends Application {
     public void setFollowerCount(String followerCount) {
         this.followerCount = followerCount;
     }
+
 
 }
