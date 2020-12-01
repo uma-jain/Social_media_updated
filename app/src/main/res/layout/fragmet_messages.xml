@@ -7,14 +7,14 @@
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
+        android:id="@+id/nomessageyet"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=" no messages yet "
-        ></TextView>
+        android:text=" no messages yet ">
+    </TextView>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/f_messageslist"
-        android:visibility="gone"
+        android:id="@+id/fragment_messages_messageslist"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
