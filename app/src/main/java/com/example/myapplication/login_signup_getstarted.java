@@ -19,6 +19,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
+
 import Utils.UserApi;
 
 public class login_signup_getstarted extends AppCompatActivity {
@@ -74,6 +76,7 @@ public class login_signup_getstarted extends AppCompatActivity {
                                             userApi.setProfession(snapshot.getString("profession"));
                                             userApi.setUsername(snapshot.getString("username"));
                                             userApi.setUid(snapshot.getString("uid"));
+                                            userApi.setAl((ArrayList<String>) snapshot.get("messageuids"));
                                             progressDialog.dismiss();
                                             startActivity(new Intent(login_signup_getstarted.this,MainActivity.class));
                                             finish();

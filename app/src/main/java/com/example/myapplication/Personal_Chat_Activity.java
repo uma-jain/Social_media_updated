@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
@@ -25,6 +26,7 @@ import android.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -40,6 +42,8 @@ import com.squareup.picasso.Picasso;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -55,6 +59,7 @@ public class Personal_Chat_Activity extends AppCompatActivity {
       TextView hisStatus, hisName;
       ImageView profilePic;
       EditText chatMessage;
+    private ProgressDialog progressDialog;
       Button sendButton;
 //
       private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
@@ -92,7 +97,7 @@ public class Personal_Chat_Activity extends AppCompatActivity {
                 recyclerView.setHasFixedSize(true);
                recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-          initmessageList();
+          initmessageList2();
           //set adapter
         //sort messageList
         //adapter
@@ -124,6 +129,7 @@ public class Personal_Chat_Activity extends AppCompatActivity {
                                   public void onComplete(@NonNull Task<DocumentReference> task) {
                                       Toast.makeText(Personal_Chat_Activity.this, "", Toast.LENGTH_SHORT).show();
                                       chatMessage.setText("");
+                                      initmessageList2();
                                   }
                               })
                               .addOnFailureListener(new OnFailureListener() {
@@ -156,6 +162,9 @@ public class Personal_Chat_Activity extends AppCompatActivity {
 
     private void initmessageList() {
         //get data set adapter;
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Checking current status.. Please wait");
+        progressDialog.show();
         collectionReference.orderBy("messageTime").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -172,9 +181,58 @@ public class Personal_Chat_Activity extends AppCompatActivity {
 
         });
 
-
+        progressDialog.dismiss();
     }
 
+    private void initmessageList2() {
+        //get data set adapter;
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Refreshing...");
+        progressDialog.show();
+        collectionReference.get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        messagesList.clear();
+                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                            MessageModel msg = doc.toObject(MessageModel.class);
+                            // Log.i("info",user.getEmail());
+                            messagesList.add(msg);
+                        }
+
+                        //sort message based on datetime
+                        Collections.sort(messagesList, new Comparator<MessageModel>() {
+                            DateFormat f = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+                            @Override
+                            public int compare(MessageModel o1, MessageModel o2) {
+                                try {
+                                    return f.parse(o1.getMessageTime()).compareTo(f.parse(o2.getMessageTime()));
+                                } catch (Exception e) {
+                                    throw new IllegalArgumentException(e);
+                                }
+                            }
+                        });
+
+                        Log.i("info","data set changed");
+                        messagesAdapter.notifyDataSetChanged();
+
+                        progressDialog.dismiss();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
