@@ -87,6 +87,8 @@ public class CreateProfileFragment extends Fragment {
         ProffEt = view.findViewById(R.id.cp_profession);
         createProfile = view.findViewById(R.id.cp_createProfile);
 
+
+        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Create Profile");
 
         //add cover photo
