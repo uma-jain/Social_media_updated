@@ -10,6 +10,7 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.EditTextPreference;
 import android.text.TextUtils;
 import android.util.Log;
@@ -65,6 +66,8 @@ public class Personal_Chat_Activity extends AppCompatActivity {
       private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
       private FirebaseFirestore db = FirebaseFirestore.getInstance();
       private CollectionReference collectionReference;
+      //Handler mHandler;
+
 
     private List<MessageModel> messagesList = new ArrayList<MessageModel>();
       MessagesAdapter messagesAdapter;
@@ -97,7 +100,7 @@ public class Personal_Chat_Activity extends AppCompatActivity {
                 recyclerView.setHasFixedSize(true);
                recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-          initmessageList2();
+          initmessageList();
           //set adapter
         //sort messageList
         //adapter
@@ -129,7 +132,7 @@ public class Personal_Chat_Activity extends AppCompatActivity {
                                   public void onComplete(@NonNull Task<DocumentReference> task) {
                                       Toast.makeText(Personal_Chat_Activity.this, "", Toast.LENGTH_SHORT).show();
                                       chatMessage.setText("");
-                                      initmessageList2();
+                                      initmessageList();
                                   }
                               })
                               .addOnFailureListener(new OnFailureListener() {
@@ -158,7 +161,23 @@ public class Personal_Chat_Activity extends AppCompatActivity {
                       .fit()
                       .into(profilePic);
           }
+//        this.mHandler = new Handler();
+//        m_Runnable.run();
     }
+
+//    private final Runnable m_Runnable = new Runnable()
+//    {
+//        public void run()
+//
+//        {
+//            Toast.makeText(Personal_Chat_Activity.this,"in runnable",Toast.LENGTH_SHORT).show();
+//
+//            Personal_Chat_Activity.this.mHandler.postDelayed(m_Runnable,2000);
+//
+//            Toast.makeText(Personal_Chat_Activity.this, "run refresh", Toast.LENGTH_SHORT).show();
+//        }
+//
+//    };
 
     private void initmessageList() {
         //get data set adapter;
@@ -184,48 +203,47 @@ public class Personal_Chat_Activity extends AppCompatActivity {
         progressDialog.dismiss();
     }
 
-    private void initmessageList2() {
-        //get data set adapter;
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Refreshing...");
-        progressDialog.show();
-        collectionReference.get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        messagesList.clear();
-                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                            MessageModel msg = doc.toObject(MessageModel.class);
-                            // Log.i("info",user.getEmail());
-                            messagesList.add(msg);
-                        }
-
-                        //sort message based on datetime
-                        Collections.sort(messagesList, new Comparator<MessageModel>() {
-                            DateFormat f = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
-                            @Override
-                            public int compare(MessageModel o1, MessageModel o2) {
-                                try {
-                                    return f.parse(o1.getMessageTime()).compareTo(f.parse(o2.getMessageTime()));
-                                } catch (Exception e) {
-                                    throw new IllegalArgumentException(e);
-                                }
-                            }
-                        });
-
-                        Log.i("info","data set changed");
-                        messagesAdapter.notifyDataSetChanged();
-
-                        progressDialog.dismiss();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-
-                    }
-                });
-    }
+//    private void initmessageList2() {
+//        //get data set adapter;
+//        progressDialog = new ProgressDialog(this);
+//        progressDialog.setMessage("Refreshing...");
+//        progressDialog.show();
+//        collectionReference.get()
+//                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+//                        messagesList.clear();
+//                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+//                            MessageModel msg = doc.toObject(MessageModel.class);
+//                            // Log.i("info",user.getEmail());
+//                            messagesList.add(msg);
+//                        }
+//
+//                        //sort message based on datetime
+//                        Collections.sort(messagesList, new Comparator<MessageModel>() {
+//                            DateFormat f = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+//                            @Override
+//                            public int compare(MessageModel o1, MessageModel o2) {
+//                                try {
+//                                    return f.parse(o1.getMessageTime()).compareTo(f.parse(o2.getMessageTime()));
+//                                } catch (Exception e) {
+//                                    throw new IllegalArgumentException(e);
+//                                }
+//                            }
+//                        });
+//
+//                        Log.i("info","data set changed");
+//                        messagesAdapter.notifyDataSetChanged();
+//                        progressDialog.dismiss();
+//                    }
+//                })
+//                .addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//
+//                    }
+//                });
+//    }
 
 
     @Override

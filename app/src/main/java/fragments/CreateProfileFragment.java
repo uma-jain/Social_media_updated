@@ -114,6 +114,9 @@ public class CreateProfileFragment extends Fragment {
                 Toast.makeText(getActivity(), "add cover", Toast.LENGTH_LONG).show();
             }
         });
+
+        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Update Profile");
         //add data
         createProfile.setOnClickListener(new View.OnClickListener() {
             @Override

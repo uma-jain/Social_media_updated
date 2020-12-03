@@ -107,6 +107,11 @@ public class Home extends Fragment implements PostRecyclerAdapter.OnPostClickLis
                 firebaseAuth.signOut();
                 startActivity(new Intent(getActivity(),login_signup_getstarted.class));
                 getActivity().finish();
+                break;
+
+            case R.id.todobtn:
+                startActivity(new Intent(getActivity(), TodoActivity.class));
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
