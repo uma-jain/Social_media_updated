@@ -24,6 +24,10 @@ import Utils.UserModal;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MyHolder> {
+
+    public static final int MSG_TYPE_LEFT = 0;
+    public static final int MSG_TYPE_RIGHT = 1;
+
     Context context;
     List<MessageModel> messageModelList;
     UserApi userApi=UserApi.getInstance();
@@ -37,33 +41,26 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MyHold
     @NonNull
     @Override
     public MyHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view;
 
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.row_msg, parent, false);
+        if(viewType == MSG_TYPE_RIGHT)
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chatright, parent, false);
+        else
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chatleft, parent, false);
+
+
         return new MyHolder(view);
     }
-
     @Override
     public void onBindViewHolder(@NonNull MyHolder holder, int position) {
         String senderid= messageModelList.get(position).getSendBy();
         String msg=messageModelList.get(position).getMessageText();
         String time=messageModelList.get(position).getMessageTime();
-        Log.i("msg",msg);
-        Log.i("msg",senderid);
-        if(senderid.equals(userApi.getUid())){
-            //sender is current user
-            Log.i("msg","i am sender");
-            holder.chat_sent.setText(msg);
-            holder.time_sent.setText(time.substring(9,17));
-            holder.l_receieved.setVisibility(View.GONE);
-        }
-        else{
-
-            Log.i("msg","i am not sender");
-            holder.chat_received.setText(msg);
-            holder.time_received.setText(time.substring(9,17));
-            holder.l_sent.setVisibility(View.GONE);
-        }
+     //   Log.i("msg",msg);
+     //   Log.i("msg",senderid);
+        holder.message.setText(msg);
+        holder.sender.setText(senderid);
+        holder.timestamp.setText(time.substring(9,17));
     }
 
     @Override
@@ -71,30 +68,25 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MyHold
 
         return messageModelList.size();
     }
+    @Override
+    public int getItemViewType(int position) {
+        if( userApi.getUid().equals(messageModelList.get(position).getSendBy()))
+            return MSG_TYPE_RIGHT;
+        else
+            return MSG_TYPE_LEFT;
+    }
 
 
 
     class MyHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        CircleImageView imageView;
-        TextView tv_username, tv_email;
-        LinearLayout l_receieved,l_sent;
-        TextView chat_sent,time_sent;
-        TextView chat_received,time_received;
-
-        ImageView rowGoToChatActivity;
-        UsersAdapter.OnUserClickListener onUserClickListener;
+        TextView sender, message, timestamp;
 
         public MyHolder(@NonNull View itemView) {
             super(itemView);
-               l_receieved=itemView.findViewById(R.id.linear_layout_received);
-               l_sent=itemView.findViewById(R.id.linear_layout_sent);
-
-                chat_sent = itemView.findViewById(R.id.message_text_view_sent);
-                chat_received = itemView.findViewById(R.id.textview_chat_recieved);
-
-                time_received=itemView.findViewById(R.id.timestamp_text_view_receieved);
-                time_sent=itemView.findViewById(R.id.timestamp_text_sent);
+            sender = itemView.findViewById(R.id.sendername);
+            message = itemView.findViewById(R.id.textmessage);
+            timestamp = itemView.findViewById(R.id.timestamp);
 
         }
 
