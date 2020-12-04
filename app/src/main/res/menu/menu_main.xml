@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
   <item android:title="Logout" android:id="@+id/logoutbtn" />
-
+  <item android:title="ToDo" android:id="@+id/todobtn" />
 
   <item android:title="Search"
       android:icon="@drawable/ic_baseline_search_24"

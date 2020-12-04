@@ -202,6 +202,9 @@ public class SearchFragment extends Fragment implements UsersAdapter.OnUserClick
              firebaseAuth.signOut();
                 startActivity(new Intent(getActivity(),login_signup_getstarted.class));
                 getActivity().finish();
+            case R.id.todobtn:
+                startActivity(new Intent(getActivity(), TodoActivity.class));
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
