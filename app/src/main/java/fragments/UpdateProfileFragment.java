@@ -115,8 +115,7 @@ public class UpdateProfileFragment extends Fragment {
         ProffEt=view.findViewById(R.id.up_profession);
         updateProfile=view.findViewById(R.id.up_UpdateProfile);
 
-        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Update Profile");
+
 
        //set all the existing values
         final UserApi userApi=UserApi.getInstance();

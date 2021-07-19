@@ -195,6 +195,7 @@ public class SearchFragment extends Fragment implements UsersAdapter.OnUserClick
         });
     }
 
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){

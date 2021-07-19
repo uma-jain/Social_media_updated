@@ -88,8 +88,8 @@
         android:layout_width="match_parent"
         android:layout_below="@id/v1"
         android:layout_margin="5dp"
-        android:layout_height="match_parent">
-
+        android:layout_height="match_parent"
+        tools:ignore="MissingClass">
 
     </androidx.recyclerview.widget.RecyclerView>
 

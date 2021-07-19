@@ -63,6 +63,8 @@ public class Personal_Chat_Activity extends AppCompatActivity {
     EditText chatMessage;
     Button sendButton;
     //
+    UserApi userApi = UserApi.getInstance();
+
     private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference collectionReference;
@@ -103,9 +105,6 @@ public class Personal_Chat_Activity extends AppCompatActivity {
         //sort messageList
         //adapter
         messagesAdapter=new MessagesAdapter(getApplicationContext(),messagesList);
-
-
-
 
         recyclerView.setAdapter(messagesAdapter);
         sendButton.setOnClickListener(new View.OnClickListener() {
@@ -180,6 +179,11 @@ public class Personal_Chat_Activity extends AppCompatActivity {
                 for (QueryDocumentSnapshot doc : value) {
                     MessageModel msg = doc.toObject(MessageModel.class);
                     // Log.i("info",user.getEmail());
+                    if(msg.getSendBy().equals(userApi.getUid())){
+                        msg.setSenderName(userApi.getUsername());
+                    }else{
+                        msg.setSenderName((String) hisName.getText());
+                    }
                     messagesList.add(msg);
                 }
                 Collections.sort(messagesList, new Comparator<MessageModel>() {
@@ -194,7 +198,6 @@ public class Personal_Chat_Activity extends AppCompatActivity {
                     }
                 });
                 recyclerView.scrollToPosition(messagesList.size() - 1);
-
                 Log.i("info","data set changed");
                 messagesAdapter.notifyDataSetChanged();
             }

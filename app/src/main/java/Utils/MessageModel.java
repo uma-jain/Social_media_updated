@@ -1,12 +1,13 @@
 package Utils;
 
 public class MessageModel {
-    private String messageText, messageTime, sendBy;
+    private String messageText, messageTime, sendBy,senderName;
 
-    public MessageModel(String messageText, String messageTime, String sendBy) {
+    public MessageModel(String messageText, String messageTime, String sendBy,String senderName) {
         this.messageText = messageText;
         this.messageTime = messageTime;
         this.sendBy = sendBy;
+        this.senderName = senderName;
     }
 
     public MessageModel()
@@ -21,6 +22,16 @@ public class MessageModel {
     public void setMessageText(String messageText) {
         this.messageText = messageText;
     }
+
+    public String getSenderName() {
+        return senderName;
+    }
+
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
+    }
+
+
 
     public String getMessageTime() {
         return messageTime;

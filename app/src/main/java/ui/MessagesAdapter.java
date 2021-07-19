@@ -53,14 +53,20 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MyHold
     }
     @Override
     public void onBindViewHolder(@NonNull MyHolder holder, int position) {
+
         String senderid= messageModelList.get(position).getSendBy();
+        String sendername= messageModelList.get(position).getSenderName();
+
         String msg=messageModelList.get(position).getMessageText();
         String time=messageModelList.get(position).getMessageTime();
+
      //   Log.i("msg",msg);
      //   Log.i("msg",senderid);
+
         holder.message.setText(msg);
-        holder.sender.setText(senderid);
+        holder.sender.setText(sendername);
         holder.timestamp.setText(time.substring(9,17));
+
     }
 
     @Override

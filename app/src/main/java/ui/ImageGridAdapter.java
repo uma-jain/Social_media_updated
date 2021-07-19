@@ -31,6 +31,7 @@ public class ImageGridAdapter extends RecyclerView.Adapter<ImageGridAdapter.MyVi
         this.context = context;
         this.personImages = personImages;
     }
+
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // infalte the item Layout
@@ -43,6 +44,7 @@ public class ImageGridAdapter extends RecyclerView.Adapter<ImageGridAdapter.MyVi
 
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
         final PostModel pm = (PostModel) personImages.get(position);
+        
         String imageUrl;
         imageUrl = pm.getImageUrl();
 

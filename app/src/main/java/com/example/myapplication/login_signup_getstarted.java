@@ -46,6 +46,7 @@ public class login_signup_getstarted extends AppCompatActivity {
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+
                 if(currentUser != null ){
                     final String currentUserId = currentUser.getUid();
 
@@ -66,6 +67,7 @@ public class login_signup_getstarted extends AppCompatActivity {
                                         for (QueryDocumentSnapshot snapshot:value)
                                         {
                                             UserApi userApi = UserApi.getInstance();
+
                                             userApi.setBio(snapshot.getString("bio"));
                                             userApi.setCover(snapshot.getString("cover"));
                                             userApi.setEmail(snapshot.getString("email"));
@@ -77,8 +79,6 @@ public class login_signup_getstarted extends AppCompatActivity {
                                             userApi.setUid(snapshot.getString("uid"));
 
                                            userApi.setAl((ArrayList<String>) snapshot.get("messageuids"));
-
-                                            userApi.setAl((ArrayList<String>) snapshot.get("messageuids"));
 
                                             progressDialog.dismiss();
                                             startActivity(new Intent(login_signup_getstarted.this,MainActivity.class));
@@ -121,7 +121,9 @@ public class login_signup_getstarted extends AppCompatActivity {
 
     @Override
     protected void onStart() {
+
         super.onStart();
+
         currentUser = firebaseAuth.getCurrentUser();
 //        if(currentUser == null ){
 //            startActivity(new Intent(login_signup_getstarted.this,login_signup_getstarted.class));

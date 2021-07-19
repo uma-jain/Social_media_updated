@@ -26,13 +26,18 @@ import com.example.myapplication.R;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -58,9 +63,11 @@ public class CreateProfileFragment extends Fragment {
     private static final int PICK_IMAGE = 1;
     String profileOrCover;
     UploadTask uploadTask;
-    //realtime databse
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference databaseReference = database.getReference("Users");
+
+    //Firestore connection
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    CollectionReference collectionReference = db.collection("Users");
+
 
     public CreateProfileFragment() {
 
@@ -75,6 +82,7 @@ public class CreateProfileFragment extends Fragment {
         //current user
         firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+
         //storage
         mStorageRef = FirebaseStorage.getInstance().getReference("profile_cover");
         //tv and iv
@@ -88,7 +96,7 @@ public class CreateProfileFragment extends Fragment {
         createProfile = view.findViewById(R.id.cp_createProfile);
 
 
-        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
+
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Create Profile");
 
         //add cover photo
@@ -116,9 +124,6 @@ public class CreateProfileFragment extends Fragment {
                 Toast.makeText(getActivity(), "add cover", Toast.LENGTH_LONG).show();
             }
         });
-
-        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Update Profile");
         //add data
         createProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -135,16 +140,20 @@ public class CreateProfileFragment extends Fragment {
         final String username = nameEt.getText().toString();
         final String prof = ProffEt.getText().toString();
         //add data is profile
+
         final HashMap<String, Object> profile = new HashMap<>();
+
         progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage("Creating Profile...It will take a while....");
 
         //check if all fields are filled
         if (!TextUtils.isEmpty(bio) || !TextUtils.isEmpty(username) || !TextUtils.isEmpty(prof) || String.valueOf(profileUri) != null || String.valueOf(coverUri) != null) {
             progressDialog.show();
+
             //upload both images to storage
             final StorageReference reference = mStorageRef.child(System.currentTimeMillis() + "." + getFileExt(profileUri));
             final StorageReference reference1 = mStorageRef.child(System.currentTimeMillis() + "." + getFileExt(coverUri));
+
             //profile image
             uploadTask = reference.putFile(profileUri);
             Task<Uri> uriTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
@@ -189,50 +198,39 @@ public class CreateProfileFragment extends Fragment {
                     profile.put("cover", coveruri.toString());
                     profile.put("username", username);
                     profile.put("bio", bio);
-                    profile.put("profesion", prof);
+                    profile.put("profession", prof);
                     //get user
                     firebaseAuth = FirebaseAuth.getInstance();
                     FirebaseUser currentUser = firebaseAuth.getCurrentUser();
 
-                    databaseReference.child(currentUser.getUid()).updateChildren(profile)
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    progressDialog.dismiss();
-                                    Toast.makeText(getActivity(), "PROFILE Created Successfully", Toast.LENGTH_LONG).show();
-                                    //redirect to profile fragment
-                                    Intent intent = new Intent(getActivity(), MainActivity.class);
-                                    startActivity(intent);
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
-                                }
-                            });
-                    //firestore
-                    FirebaseFirestore db = FirebaseFirestore.getInstance();
-                    DocumentReference documentReference;
                     //firestore storage
-                    documentReference =db.collection("Users").document(currentUser.getUid());
-                    documentReference.set(profile).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    collectionReference.whereEqualTo("uid", currentUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            // progressDialog.dismiss();
-                            //   Toast.makeText(getActivity(), "PROFILE Created Successfully", Toast.LENGTH_LONG).show();
-                            // redirect to profile fragment
-                            //   Intent intent = new Intent(getActivity(), MainActivity.class);
-                            //    startActivity(intent);
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                Log.i("info", "start firestore procedure");
+                                for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                                    String doc_Id = documentSnapshot.getId();
+                                    final DocumentReference documentReference1 = db.collection("Users").document(doc_Id);
+                                    Log.i("info", "check firestore result");
+                                    documentReference1.update(profile).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            progressDialog.dismiss();
+                                            Toast.makeText(getActivity(), "profile Created Successfully", Toast.LENGTH_LONG).show();
+                                            //redirect to profile fragment
 
-                        }
-                    })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+
+                                        }
+                                    });
                                 }
-                            });
+                            }
+                        }
+                    });
                 }
                 //local storage
 
@@ -273,3 +271,4 @@ public class CreateProfileFragment extends Fragment {
     }
 
 }
+
